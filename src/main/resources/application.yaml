@@ -1,0 +1,17 @@
+#mybatis:
+mybatis:
+  mapper-locations: classpath:/mapper/*.xml
+
+spring:
+  datasource:
+    driverClassName: com.mysql.cj.jdbc.Driver
+    jdbc-url: jdbc:mysql://database-test.cpiawvgqofun.ap-northeast-2.rds.amazonaws.com:3306/WONBOARD
+    username: admin
+    password: Portal2023!
+
+#server:
+#  port: 8081
+
+jwt:
+  secret: 4oCYbGVhLXNwcmluZy1ib290LWp3dC10dXRvcmlhbC1zZWNyZXQtbmZ0LXNwcmluZy1ib290LWp3dC10dXRvcmlhbOKAmQo=
+
