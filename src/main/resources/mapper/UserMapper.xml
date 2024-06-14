@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.re.mydata.wonboard.dao.UserDAO">
+
+    <insert id="createUser" parameterType="kr.re.mydata.wonboard.model.db.User">
+        INSERT INTO
+            user (id, login_email, password, refresh_token, refresh_token_issue_dt, reg_dt, upd_dt, name)
+        VALUES
+            (#{user.id}, #{user.loginEmail}, #{user.password}, 'temporary_token', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, #{user.name})
+    </insert>
+
+    <select id="getUserByEmail" parameterType="string" resultType="kr.re.mydata.wonboard.model.db.User">
+        SELECT login_email AS "loginEmail", password FROM user WHERE login_email = #{loginEmail}
+    </select>
+
+    <update id="updateRefreshToken" parameterType="kr.re.mydata.wonboard.model.db.User">
+        UPDATE  user SET refresh_token = #{refreshToken}, refresh_token_issue_dt = CURRENT_TIMESTAMP WHERE  login_email = #{loginEmail}
+    </update>
+
+    <update id="storeRefreshToken" >
+        UPDATE user SET refresh_token = #{newRefreshToken}, refresh_token_issue_dt = CURRENT_TIMESTAMP  WHERE login_email= #{loginEmail}
+    </update>
+
+    <select id="getStoredRefreshToken">
+        SELECT refresh_token FROM user WHERE login_email = #{loginEmail}
+    </select>
+
+</mapper>

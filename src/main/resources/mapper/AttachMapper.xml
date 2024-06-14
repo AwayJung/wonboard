@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.re.mydata.wonboard.dao.AttachDAO">
+    <insert id="postAttach" parameterType="kr.re.mydata.wonboard.model.db.Attach">
+        INSERT INTO attachment (path,real_name,post_id,reg_dt,name,id)
+        VALUES (#{path}, #{realName}, #{postId}, CURRENT_TIMESTAMP, #{name}, #{id})
+    </insert>
+</mapper>
