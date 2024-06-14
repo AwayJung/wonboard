@@ -43,8 +43,8 @@ public class ArticleService {
                 if (userDetail != null && userDetail.getUsername() != null) {
                     if (article != null) {
                         // principal을 통해 받아온 이메일을 reg_user_id 저장
-                        article.setReg_user_id(userDetail.getUsername());
-                        article.setUpd_user_id(userDetail.getUsername());
+                        article.setRegUserId(userDetail.getUsername());
+                        article.setUpdUserId(userDetail.getUsername());
                     } else {
                         throw new IllegalStateException("Article is null");
                     }

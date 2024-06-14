@@ -63,7 +63,7 @@ public class ArticleController {
                 UserDetails userDetails = (UserDetails) auth.getPrincipal();
                 String currentUserId = userDetails.getUsername();
                 System.out.println("Current user id: " + currentUserId);
-                article.setUpd_user_id(currentUserId);
+                article.setUpdUserId(currentUserId);
             } else {
                 System.out.println("The principal is not an instance of UserDetails.");
             }
