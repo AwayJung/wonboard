@@ -2,7 +2,6 @@ package kr.re.mydata.wonboard.controller;
 
 import kr.re.mydata.wonboard.model.db.Article;
 import kr.re.mydata.wonboard.service.ArticleService;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -57,14 +56,14 @@ public class ArticleController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResp> updateArticle(@PathVariable("id") int id, @RequestPart("article") Article article, @RequestPart("file") MultipartFile file) {
+    public ResponseEntity<ApiResp> updateArticle(@PathVariable("id") int id, @RequestPart("article") Article article, @RequestPart(value = "file", required = false) MultipartFile file) {
         try {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             if (auth.getPrincipal() instanceof UserDetails) {
                 UserDetails userDetails = (UserDetails) auth.getPrincipal();
                 String currentUserId = userDetails.getUsername();
                 System.out.println("Current user id: " + currentUserId);
-                article.setUpdUserId(currentUserId);
+                article.setUpd_user_id(currentUserId);
             } else {
                 System.out.println("The principal is not an instance of UserDetails.");
             }

@@ -3,7 +3,7 @@
 
 <mapper namespace="kr.re.mydata.wonboard.dao.AttachDAO">
     <insert id="postAttach" parameterType="kr.re.mydata.wonboard.model.db.Attach">
-        INSERT INTO attachment (path,real_name,post_id,reg_dt,name,id)
-        VALUES (#{path}, #{realName}, #{postId}, CURRENT_TIMESTAMP, #{name}, #{id})
+        INSERT INTO attachment (path,real_name,post_id,reg_dt,name)
+        VALUES (#{path}, #{realName}, #{postId}, CURRENT_TIMESTAMP, #{name})
     </insert>
 </mapper>

@@ -4,7 +4,7 @@
 <mapper namespace="kr.re.mydata.wonboard.dao.ArticleDAO">
     <insert id="postArticle" parameterType="kr.re.mydata.wonboard.model.db.Article" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO post (id, title, content, reg_dt, upd_dt, reg_user_id, upd_user_id)
-        VALUES (#{id}, #{title}, #{content}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, #{regUserId}, #{updUserId})
+        VALUES (#{id}, #{title}, #{content}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, #{reg_user_id}, #{upd_user_id})
     </insert>
 
     <select id="getArticleList" resultType="kr.re.mydata.wonboard.model.db.Article">
@@ -16,7 +16,7 @@
     </select>
 
     <update id="updateArticle" parameterType="kr.re.mydata.wonboard.model.db.Article">
-        UPDATE post SET title = #{article.title}, content = #{article.content}, upd_dt = CURRENT_TIMESTAMP, upd_user_id = #{article.updUserId} WHERE id = #{id};
+        UPDATE post SET title = #{article.title}, content = #{article.content}, upd_dt = CURRENT_TIMESTAMP, upd_user_id = #{article.upd_user_id} WHERE id = #{id};
     </update>
 
     <delete id="deleteArticle" parameterType="int">

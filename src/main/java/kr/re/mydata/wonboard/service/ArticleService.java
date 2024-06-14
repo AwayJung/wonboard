@@ -8,6 +8,7 @@ import kr.re.mydata.wonboard.model.db.Attach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -25,9 +26,12 @@ public class ArticleService {
     @Autowired
     private AttachDAO attachDAO;
 
+
+    @Transactional
     public Article postArticle(Article article, MultipartFile file) {
         try {
             System.out.println("postArticle called with article: " + article + " and file: " + file);
+
 
             // principal을 통해 사용자 아이디를 가져옴
             Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -38,9 +42,9 @@ public class ArticleService {
                 System.out.println("Logged in user: " + userDetail.getUsername());
                 if (userDetail != null && userDetail.getUsername() != null) {
                     if (article != null) {
-                        // principal을 통해 받아온 이메일을 regUserId에 저장
-                        article.setRegUserId(userDetail.getUsername());
-                        article.setUpdUserId(userDetail.getUsername());
+                        // principal을 통해 받아온 이메일을 reg_user_id 저장
+                        article.setReg_user_id(userDetail.getUsername());
+                        article.setUpd_user_id(userDetail.getUsername());
                     } else {
                         throw new IllegalStateException("Article is null");
                     }
@@ -51,17 +55,16 @@ public class ArticleService {
                 throw new IllegalStateException("User is not logged in");
             }
 
-
-//            Article postArticle = articleDAO.postArticle(article);
-//            System.out.println("Article posted: " + postArticle);
-
+            // Article 저장
             int rowsAffected = articleDAO.postArticle(article);
             if (rowsAffected != 1) {
                 throw new IllegalStateException("Article posting failed");
             }
+                    System.out.println("Article posted with ID: " + article.getId());
             System.out.println("Article posted: " + article);
-            if (file != null && !file.isEmpty()) {
 
+            // 첨부 파일 저장
+            if (file != null && !file.isEmpty()) {
                 String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
                 File serverFile = new File("D:/workspaces/spring/images/" + fileName);
                 file.transferTo(serverFile);
@@ -70,7 +73,7 @@ public class ArticleService {
                 attach.setRealName(fileName);
                 attach.setName(file.getOriginalFilename());
                 attach.setPath(serverFile.getAbsolutePath());
-                attach.setPostId(article.getId());
+                attach.setPostId(article.getId()); // Article의 ID를 설정
 
                 attachDAO.postAttach(attach);
                 System.out.println("첨부파일: " + attach);
@@ -82,6 +85,7 @@ public class ArticleService {
             throw new RuntimeException("Article posting failed", e);
         }
     }
+
 
     public List<Article> getArticleList() {
         return articleDAO.getArticleList();

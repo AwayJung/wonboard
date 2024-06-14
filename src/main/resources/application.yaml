@@ -9,6 +9,9 @@ spring:
     username: admin
     password: Portal2023!
 
+#server:
+#  port: 8081
+
 jwt:
   secret: 4oCYbGVhLXNwcmluZy1ib290LWp3dC10dXRvcmlhbC1zZWNyZXQtbmZ0LXNwcmluZy1ib290LWp3dC10dXRvcmlhbOKAmQo=
 
