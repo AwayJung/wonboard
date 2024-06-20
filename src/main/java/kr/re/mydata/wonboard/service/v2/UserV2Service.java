@@ -9,13 +9,20 @@ import kr.re.mydata.wonboard.model.request.v2.UserV2LoginReq;
 import kr.re.mydata.wonboard.model.request.v2.UserV2Req;
 import kr.re.mydata.wonboard.model.response.v2.UserV2Resp;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
+
 @Service
 public class UserV2Service {
+    private static final Logger logger = LoggerFactory.getLogger(UserV2Service.class);
 
     @Autowired
     private UserDAO userDAO;
@@ -75,27 +82,63 @@ public class UserV2Service {
     }
 
     @Transactional
-        public UserV2Resp login(UserV2LoginReq userReq) throws Exception{
-            try{
-                String loginEmail = userReq.getLoginEmail();
-                User userFromDB = userDAO.getUserByEmail(loginEmail);
-                if(userFromDB == null || !passwordEncoder.matches(userReq.getPassword(), userFromDB.getPassword())){
-                    throw new CommonApiException(ApiRespPolicy.ERR_INVALID_USER);
-                }
-                String accessToken = jwtUtil.createAccessToken(userFromDB.getLoginEmail());
-                String refreshToken = jwtUtil.createRefreshToken(userFromDB.getLoginEmail());
-                userFromDB.setRefreshToken(refreshToken);
-                userDAO.updateRefreshToken(userFromDB);
+    public UserV2Resp login(UserV2LoginReq userReq) throws Exception {
+        try {
 
-                UserV2Resp userV2Resp = modelMapper.map(userFromDB, UserV2Resp.class);
-                userV2Resp.setAccessToken(accessToken);
-                userV2Resp.setRefreshToken(refreshToken);
-
-                return userV2Resp;
-
-            }catch (Exception e){
-                e.printStackTrace();
-                throw e;
+            String loginEmail = userReq.getLoginEmail();
+            User userFromDB = userDAO.getUserByEmail(loginEmail);
+            if (userFromDB == null || !passwordEncoder.matches(userReq.getPassword(), userFromDB.getPassword())) {
+                throw new CommonApiException(ApiRespPolicy.ERR_INVALID_USER);
             }
+            String accessToken = jwtUtil.createAccessToken(userFromDB.getLoginEmail());
+            String refreshToken = jwtUtil.createRefreshToken(userFromDB.getLoginEmail());
+            userFromDB.setRefreshToken(refreshToken);
+            userDAO.updateRefreshToken(userFromDB);
+
+            logger.info("Access Token: {}", accessToken);
+            logger.info("Refresh Token: {}", refreshToken);
+
+            UserV2Resp userV2Resp = modelMapper.map(userFromDB, UserV2Resp.class);
+            userV2Resp.setAccessToken(accessToken);
+            userV2Resp.setRefreshToken(refreshToken);
+
+            return userV2Resp;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
         }
     }
+
+
+    @Transactional
+    public UserV2Resp refresh() throws Exception {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String loginEmail = authentication.getName();
+
+            String storedRefreshToken = userDAO.getStoredRefreshToken(loginEmail);
+
+            if (storedRefreshToken == null) {
+                throw new CommonApiException(ApiRespPolicy.ERR_INVALID_REFRESH_TOKEN);
+            }
+
+            String newAccessToken = jwtUtil.createAccessToken(loginEmail);
+            String newRefreshToken = jwtUtil.createRefreshToken(loginEmail);
+
+            logger.info("New Access Token: {}", newAccessToken);
+            logger.info("New Refresh Token: {}", newRefreshToken);
+            userDAO.storeRefreshToken(loginEmail, newRefreshToken);
+
+            UserV2Resp userV2Resp = new UserV2Resp();
+            userV2Resp.setNewAccessToken(newAccessToken);
+            userV2Resp.setNewRefreshToken(newRefreshToken);
+
+            return userV2Resp;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+}

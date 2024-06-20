@@ -15,5 +15,9 @@ public class UserV2Resp {
     private String AccessToken;
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private String RefreshToken;
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private String newRefreshToken;
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private String newAccessToken;
 }
 
