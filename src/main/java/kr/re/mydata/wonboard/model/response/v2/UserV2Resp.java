@@ -11,5 +11,9 @@ public class UserV2Resp {
     private String loginEmail;
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private String name;
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private String AccessToken;
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private String RefreshToken;
 }
 
