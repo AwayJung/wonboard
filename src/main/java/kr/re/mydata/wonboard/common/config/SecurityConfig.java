@@ -62,6 +62,8 @@ public class SecurityConfig {
                         .dispatcherTypeMatchers().permitAll()
                         .requestMatchers(
                                 new AntPathRequestMatcher("/user/signup"),
+                                new AntPathRequestMatcher("/v2/users/signup"),
+                                new AntPathRequestMatcher("/v2/users/signup-example"),
                                 new AntPathRequestMatcher("/user/login")
                         ).permitAll()
                         .requestMatchers(
