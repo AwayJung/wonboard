@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
+
 
 @RestController
 @RequestMapping("/v2/users")
@@ -23,14 +25,14 @@ public class UserV2Controller {
     private UserV2Service userService;
 
     @PostMapping("/signup")
-    public ResponseEntity<ApiV2Resp> signup(@RequestBody @Valid UserV2Req userReq) throws Exception  {
+    public ResponseEntity<ApiV2Resp> signup(@RequestBody @Valid UserV2Req userReq) throws Exception {
         userService.createUser(userReq);
         return ResponseEntity.status(ApiRespPolicy.SUCCESS_CREATED.getHttpStatus()).body(ApiV2Resp.of(ApiRespPolicy.SUCCESS_CREATED));
     }
 
     // Example: Return Response body
     @PostMapping("/signup-example")
-    public ResponseEntity<ApiV2Resp> signupAndReturnResponseBody(@RequestBody @Valid UserV2Req userReq) throws Exception  {
+    public ResponseEntity<ApiV2Resp> signupAndReturnResponseBody(@RequestBody @Valid UserV2Req userReq) throws Exception {
         UserV2Resp result = userService.createUserAndReturnResponseBody(userReq);
         return ResponseEntity.status(ApiRespPolicy.SUCCESS_CREATED.getHttpStatus()).body(ApiV2Resp.of(ApiRespPolicy.SUCCESS_CREATED, result));
     }
@@ -41,4 +43,9 @@ public class UserV2Controller {
         return ResponseEntity.status(ApiRespPolicy.SUCCESS.getHttpStatus()).body(ApiV2Resp.of(ApiRespPolicy.SUCCESS));
     }
 
+    @PostMapping("/refresh")
+    public ResponseEntity<ApiV2Resp> refresh() throws Exception {
+        userService.refresh();
+        return ResponseEntity.status(ApiRespPolicy.SUCCESS_ISSUE_TOKEN.getHttpStatus()).body(ApiV2Resp.of(ApiRespPolicy.SUCCESS_ISSUE_TOKEN));
+    }
 }
