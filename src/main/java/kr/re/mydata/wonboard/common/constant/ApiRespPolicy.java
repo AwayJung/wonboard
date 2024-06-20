@@ -10,7 +10,8 @@ public enum ApiRespPolicy {
     ERR_SYSTEM(HttpStatus.INTERNAL_SERVER_ERROR, 50000, "message.api.resp.policy.err_system"),
 
     ERR_INVALID_PARAMS(HttpStatus.BAD_REQUEST, 40001, "message.api.resp.policy.err_invalid_params"),
-    ERR_DUPLICATED_USER(HttpStatus.CONFLICT, 40901, "message.api.resp.policy.err_duplicated_user");
+    ERR_DUPLICATED_USER(HttpStatus.CONFLICT, 40901, "message.api.resp.policy.err_duplicated_user"),
+    ERR_INVALID_USER(HttpStatus.UNAUTHORIZED, 40400, "message.api.resp.policy.err_invalid_user"),;
 
     private final HttpStatus httpStatus;
     private final int code;

@@ -3,6 +3,7 @@ package kr.re.mydata.wonboard.controller.v2;
 import jakarta.validation.Valid;
 import kr.re.mydata.wonboard.common.constant.ApiRespPolicy;
 import kr.re.mydata.wonboard.common.model.response.ApiV2Resp;
+import kr.re.mydata.wonboard.model.request.v2.UserV2LoginReq;
 import kr.re.mydata.wonboard.model.request.v2.UserV2Req;
 import kr.re.mydata.wonboard.model.response.v2.UserV2Resp;
 import kr.re.mydata.wonboard.service.v2.UserV2Service;
@@ -32,6 +33,12 @@ public class UserV2Controller {
     public ResponseEntity<ApiV2Resp> signupAndReturnResponseBody(@RequestBody @Valid UserV2Req userReq) throws Exception  {
         UserV2Resp result = userService.createUserAndReturnResponseBody(userReq);
         return ResponseEntity.status(ApiRespPolicy.SUCCESS_CREATED.getHttpStatus()).body(ApiV2Resp.of(ApiRespPolicy.SUCCESS_CREATED, result));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<ApiV2Resp> login(@RequestBody @Valid UserV2LoginReq userReq) throws Exception {
+        userService.login(userReq);
+        return ResponseEntity.status(ApiRespPolicy.SUCCESS.getHttpStatus()).body(ApiV2Resp.of(ApiRespPolicy.SUCCESS));
     }
 
 }

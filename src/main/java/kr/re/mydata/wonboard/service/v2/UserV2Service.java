@@ -5,6 +5,7 @@ import kr.re.mydata.wonboard.common.exception.CommonApiException;
 import kr.re.mydata.wonboard.common.jwt.JwtUtil;
 import kr.re.mydata.wonboard.dao.UserDAO;
 import kr.re.mydata.wonboard.model.db.User;
+import kr.re.mydata.wonboard.model.request.v2.UserV2LoginReq;
 import kr.re.mydata.wonboard.model.request.v2.UserV2Req;
 import kr.re.mydata.wonboard.model.response.v2.UserV2Resp;
 import org.modelmapper.ModelMapper;
@@ -72,4 +73,29 @@ public class UserV2Service {
             throw e;
         }
     }
-}
+
+    @Transactional
+        public UserV2Resp login(UserV2LoginReq userReq) throws Exception{
+            try{
+                String loginEmail = userReq.getLoginEmail();
+                User userFromDB = userDAO.getUserByEmail(loginEmail);
+                if(userFromDB == null || !passwordEncoder.matches(userReq.getPassword(), userFromDB.getPassword())){
+                    throw new CommonApiException(ApiRespPolicy.ERR_INVALID_USER);
+                }
+                String accessToken = jwtUtil.createAccessToken(userFromDB.getLoginEmail());
+                String refreshToken = jwtUtil.createRefreshToken(userFromDB.getLoginEmail());
+                userFromDB.setRefreshToken(refreshToken);
+                userDAO.updateRefreshToken(userFromDB);
+
+                UserV2Resp userV2Resp = modelMapper.map(userFromDB, UserV2Resp.class);
+                userV2Resp.setAccessToken(accessToken);
+                userV2Resp.setRefreshToken(refreshToken);
+
+                return userV2Resp;
+
+            }catch (Exception e){
+                e.printStackTrace();
+                throw e;
+            }
+        }
+    }
