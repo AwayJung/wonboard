@@ -5,6 +5,8 @@ import kr.re.mydata.wonboard.common.exception.CommonApiException;
 import kr.re.mydata.wonboard.common.model.response.ApiV2Resp;
 import kr.re.mydata.wonboard.model.db.Article;
 import kr.re.mydata.wonboard.service.v2.ArticleV2Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +17,7 @@ import java.io.IOException;
 @RestController
 @RequestMapping("/v2/articles")
 public class ArticleV2Controller {
+    private static final Logger logger = LoggerFactory.getLogger(ArticleV2Controller.class);
 
     @Autowired
     private ArticleV2Service articleService;
@@ -37,4 +40,9 @@ public class ArticleV2Controller {
         return ResponseEntity.status(ApiRespPolicy.SUCCESS.getHttpStatus()).body(ApiV2Resp.of(ApiRespPolicy.SUCCESS));
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiV2Resp> updateArticle(@PathVariable("id") int id, @RequestPart Article article) throws IOException, CommonApiException {
+        articleService.updateArticle(id, article);
+        return ResponseEntity.status(ApiRespPolicy.SUCCESS.getHttpStatus()).body(ApiV2Resp.of(ApiRespPolicy.SUCCESS));
+    }
 }
