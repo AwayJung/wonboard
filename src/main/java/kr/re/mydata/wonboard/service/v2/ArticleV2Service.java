@@ -132,4 +132,29 @@ public class ArticleV2Service {
             throw new CommonApiException(ApiRespPolicy.ERR_DATABASE_NULL);
         }
     }
+
+    @Transactional
+    public int deleteArticle(int id) throws CommonApiException {
+        try {
+            String username;
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            if (auth.getPrincipal() instanceof UserDetails) {
+                UserDetails userDetails = (UserDetails) auth.getPrincipal();
+                username = userDetails.getUsername();
+            } else {
+                throw new CommonApiException(ApiRespPolicy.ERR_USER_NOT_LOGGED_IN);
+            }
+            Article article = articleDAO.getArticle(id);
+            if (article == null) {
+                throw new CommonApiException(ApiRespPolicy.ERR_ARTICLE_NULL);
+            }
+            if (!article.getRegUserId().equals(username)) {
+                throw new CommonApiException(ApiRespPolicy.ERR_USER_NOT_LOGGED_IN);
+            }
+            return articleDAO.deleteArticle(id);
+        }catch (Exception e) {
+            logger.error("Failed to delete article", e);
+            throw new CommonApiException(ApiRespPolicy.ERR_SYSTEM);
+        }
+    }
 }
