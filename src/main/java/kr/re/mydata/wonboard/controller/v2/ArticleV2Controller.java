@@ -45,4 +45,10 @@ public class ArticleV2Controller {
         articleService.updateArticle(id, article);
         return ResponseEntity.status(ApiRespPolicy.SUCCESS.getHttpStatus()).body(ApiV2Resp.of(ApiRespPolicy.SUCCESS));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiV2Resp> deleteArticle(@PathVariable("id") int id) throws IOException, CommonApiException {
+        articleService.deleteArticle(id);
+        return ResponseEntity.status(ApiRespPolicy.SUCCESS.getHttpStatus()).body(ApiV2Resp.of(ApiRespPolicy.SUCCESS));
+    }
 }
