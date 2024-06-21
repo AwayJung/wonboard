@@ -10,6 +10,7 @@ import kr.re.mydata.wonboard.model.db.Article;
 import kr.re.mydata.wonboard.model.db.Attach;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -96,5 +97,15 @@ public class ArticleV2Service {
            e.printStackTrace();
            throw e;
        }
+    }
+
+    public Article getArticle(int id) {
+        try{
+            return articleDAO.getArticle(id);
+        }catch (Exception e) {
+            logger.error("Failed to get article", e);
+            e.printStackTrace();
+            throw e;
+        }
     }
 }

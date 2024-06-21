@@ -31,4 +31,10 @@ public class ArticleV2Controller {
         return ResponseEntity.status(ApiRespPolicy.SUCCESS.getHttpStatus()).body(ApiV2Resp.of(ApiRespPolicy.SUCCESS));
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiV2Resp> getArticle(@PathVariable("id") int id){
+        articleService.getArticle(id);
+        return ResponseEntity.status(ApiRespPolicy.SUCCESS.getHttpStatus()).body(ApiV2Resp.of(ApiRespPolicy.SUCCESS));
+    }
+
 }
