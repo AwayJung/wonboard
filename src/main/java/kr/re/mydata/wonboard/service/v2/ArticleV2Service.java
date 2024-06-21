@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -58,7 +59,7 @@ public class ArticleV2Service {
             // Article 저장
             int rowsAffected = articleDAO.postArticle(article);
             if (rowsAffected != 1) {
-                throw new CommonApiException(ApiRespPolicy.ERR_ARTICLE_POST_FAILED);
+                throw new CommonApiException(ApiRespPolicy.ERR_SYSTEM);
             }
             logger.info("Article posted ID: " + article.getId());
             logger.info("Article posted successfully"+ article);
@@ -84,5 +85,16 @@ public class ArticleV2Service {
             e.printStackTrace();
             throw e;
         }
+    }
+
+    public List getArticleList() {
+       try{
+             return articleDAO.getArticleList();
+
+       }catch (Exception e) {
+           logger.error("Failed to get article list", e);
+           e.printStackTrace();
+           throw e;
+       }
     }
 }

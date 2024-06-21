@@ -25,4 +25,10 @@ public class ArticleV2Controller {
         return ResponseEntity.status(ApiRespPolicy.SUCCESS_CREATED.getHttpStatus()).body(ApiV2Resp.of(ApiRespPolicy.SUCCESS_CREATED));
     }
 
+    @GetMapping("/list")
+    public ResponseEntity<ApiV2Resp> getArticleList(){
+        articleService.getArticleList();
+        return ResponseEntity.status(ApiRespPolicy.SUCCESS.getHttpStatus()).body(ApiV2Resp.of(ApiRespPolicy.SUCCESS));
+    }
+
 }
