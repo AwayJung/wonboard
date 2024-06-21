@@ -15,9 +15,8 @@ public enum ApiRespPolicy {
     ERR_INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, 40401, "message.api.resp.policy.err_invalid_refresh_token"),
     ERR_ARTICLE_NULL(HttpStatus.NOT_FOUND, 40402, "message.api.resp.policy.err_article_null"),
     ERR_USERDETAIL_NULL(HttpStatus.NOT_FOUND, 40403, "message.api.resp.policy.err_userdetail_null"),
-    ERR_USER_NOT_LOGGED_IN(HttpStatus.UNAUTHORIZED, 40404, "message.api.resp.policy.err_user_not_logged_in"),
+    ERR_USER_NOT_LOGGED_IN(HttpStatus.UNAUTHORIZED, 40404, "message.api.resp.policy.err_user_not_logged_in");
 
-    ERR_ARTICLE_POST_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, 50001, "message.api.resp.policy.err_article_post_failed");
 
     private final HttpStatus httpStatus;
     private final int code;
