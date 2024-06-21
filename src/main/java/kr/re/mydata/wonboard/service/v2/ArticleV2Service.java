@@ -4,6 +4,7 @@ import kr.re.mydata.wonboard.common.config.UserDetail;
 import kr.re.mydata.wonboard.common.constant.ApiRespPolicy;
 
 import kr.re.mydata.wonboard.common.exception.CommonApiException;
+import kr.re.mydata.wonboard.common.jwt.JwtUtil;
 import kr.re.mydata.wonboard.dao.ArticleDAO;
 import kr.re.mydata.wonboard.dao.AttachDAO;
 import kr.re.mydata.wonboard.model.db.Article;
@@ -33,17 +34,23 @@ public class ArticleV2Service {
 
     @Autowired
     private AttachDAO attachDAO;
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @Transactional
     public Article postArticle(Article article, MultipartFile file) throws IOException, CommonApiException {
         try {
             Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//            String token = (String) auth.getCredentials();
             logger.info("Principal: " + principal);
-
             if (principal instanceof UserDetail) {
                 UserDetail userDetail = (UserDetail) principal;
                 logger.info("userDetail: " + userDetail.getUsername());
                 if (userDetail != null && userDetail.getUsername() != null) {
+//                    if (!jwtUtil.isTokenValid(token)) {
+//                        throw new CommonApiException(ApiRespPolicy.ERR_TOKEN_EXPIRED);
+//                    }
                     if (article != null) {
                         // principal을 통해 받아온 이메일을 reg_user_id 저장
                         article.setRegUserId(userDetail.getUsername());
@@ -85,30 +92,31 @@ public class ArticleV2Service {
         } catch (Exception e) {
             logger.error("Failed to post article", e);
             e.printStackTrace();
-            throw e;
+            throw new CommonApiException(ApiRespPolicy.ERR_SYSTEM);
         }
     }
 
     @Transactional
-    public List getArticleList() {
+    public List getArticleList() throws CommonApiException {
         try {
             return articleDAO.getArticleList();
 
         } catch (Exception e) {
             logger.error("Failed to get article list", e);
             e.printStackTrace();
-            throw e;
+            throw new CommonApiException(ApiRespPolicy.ERR_SYSTEM);
+
         }
     }
 
     @Transactional
-    public Article getArticle(int id) {
+    public Article getArticle(int id) throws CommonApiException {
         try {
             return articleDAO.getArticle(id);
         } catch (Exception e) {
             logger.error("Failed to get article", e);
             e.printStackTrace();
-            throw e;
+            throw new CommonApiException(ApiRespPolicy.ERR_SYSTEM);
         }
     }
 
