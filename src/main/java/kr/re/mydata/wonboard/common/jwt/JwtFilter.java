@@ -4,6 +4,8 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import kr.re.mydata.wonboard.common.config.UserDetailsServiceImpl;
+import kr.re.mydata.wonboard.common.constant.ApiRespPolicy;
+import kr.re.mydata.wonboard.common.exception.CommonApiException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -43,11 +45,23 @@ public class JwtFilter extends OncePerRequestFilter {
         String token = authorization.substring(7); // Bearer 부분을 제거하고 토큰만 추출
         logger.info("Extracted token: " + token);
 
-        if (!jwtUtil.isTokenValid(token)) {
-            logger.error("token is invalid or expired");
-            filterChain.doFilter(request, response);
+        try {
+            if (!jwtUtil.isTokenValid(token)) {
+                logger.error("token is invalid or expired");
+                throw new CommonApiException(ApiRespPolicy.ERR_TOKEN_EXPIRED);
+            }
+        } catch (CommonApiException e) {
+            response.setContentType("text/plain; charset=UTF-8");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write(e.getMessage());
             return;
         }
+
+//        if (!jwtUtil.isTokenValid(token)) {
+//            logger.error("token is invalid or expired");
+//            filterChain.doFilter(request, response);
+//            return;
+//        }
 
         String userName = jwtUtil.extractLoginEmail(token);
         logger.info("Extracted userName: " + userName);
