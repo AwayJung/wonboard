@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import org.slf4j.Logger;
@@ -63,10 +64,10 @@ public class ArticleV2Service {
                 throw new CommonApiException(ApiRespPolicy.ERR_SYSTEM);
             }
             logger.info("Article posted ID: " + article.getId());
-            logger.info("Article posted successfully"+ article);
+            logger.info("Article posted successfully" + article);
 
             // Attach 저장
-            if(file != null && !file.isEmpty()){
+            if (file != null && !file.isEmpty()) {
                 String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
                 File serverFile = new File("D:/workspaces/spring/images/" + fileName);
                 file.transferTo(serverFile);
@@ -81,31 +82,54 @@ public class ArticleV2Service {
                 logger.info("Attach posted successfully" + attach);
             }
             return article;
-        }catch (Exception e) {
+        } catch (Exception e) {
             logger.error("Failed to post article", e);
             e.printStackTrace();
             throw e;
         }
     }
 
+    @Transactional
     public List getArticleList() {
-       try{
-             return articleDAO.getArticleList();
+        try {
+            return articleDAO.getArticleList();
 
-       }catch (Exception e) {
-           logger.error("Failed to get article list", e);
-           e.printStackTrace();
-           throw e;
-       }
+        } catch (Exception e) {
+            logger.error("Failed to get article list", e);
+            e.printStackTrace();
+            throw e;
+        }
     }
 
+    @Transactional
     public Article getArticle(int id) {
-        try{
+        try {
             return articleDAO.getArticle(id);
-        }catch (Exception e) {
+        } catch (Exception e) {
             logger.error("Failed to get article", e);
             e.printStackTrace();
             throw e;
+        }
+    }
+
+    @Transactional
+    public int updateArticle(int id, Article article) throws CommonApiException {
+        try {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            if (auth.getPrincipal() instanceof UserDetails) {
+                UserDetails userDetails = (UserDetails) auth.getPrincipal();
+                String currentUserId = userDetails.getUsername();
+                logger.info("Current user id: " + currentUserId);
+                article.setUpdUserId(currentUserId);
+            } else {
+                throw new CommonApiException(ApiRespPolicy.ERR_USER_NOT_LOGGED_IN);
+            }
+
+            return articleDAO.updateArticle(id, article);
+        } catch (Exception e) {
+            logger.error("Failed to update article", e);
+            e.printStackTrace();
+            throw new CommonApiException(ApiRespPolicy.ERR_DATABASE_NULL);
         }
     }
 }
