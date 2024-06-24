@@ -17,7 +17,8 @@ public enum ApiRespPolicy {
     ERR_ARTICLE_NULL(HttpStatus.NOT_FOUND, 40402, "message.api.resp.policy.err_article_null"),
     ERR_USERDETAIL_NULL(HttpStatus.NOT_FOUND, 40403, "message.api.resp.policy.err_userdetail_null"),
     ERR_USER_NOT_LOGGED_IN(HttpStatus.UNAUTHORIZED, 40404, "message.api.resp.policy.err_user_not_logged_in"),
-    ERR_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, 40405, "message.api.resp.policy.err_token_expired");
+    ERR_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, 40405, "message.api.resp.policy.err_token_expired"),
+    ERR_TEXT_LENGTH_EXCEEDED(HttpStatus.BAD_REQUEST, 40002, "message.api.resp.policy.err_text_length_exceeded");
 
     private final HttpStatus httpStatus;
     private final int code;

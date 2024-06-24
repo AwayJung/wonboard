@@ -1,10 +1,12 @@
 package kr.re.mydata.wonboard.controller.v2;
 
+import jakarta.validation.Valid;
 import kr.re.mydata.wonboard.common.constant.ApiRespPolicy;
 import kr.re.mydata.wonboard.common.exception.CommonApiException;
 import kr.re.mydata.wonboard.common.model.response.ApiV2Resp;
 import kr.re.mydata.wonboard.model.db.Article;
 import kr.re.mydata.wonboard.model.request.v2.ArticleV2Req;
+import kr.re.mydata.wonboard.model.response.v2.ArticleV2Resp;
 import kr.re.mydata.wonboard.service.v2.ArticleV2Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +26,7 @@ public class ArticleV2Controller {
     private ArticleV2Service articleService;
 
     @PostMapping("/post")
-    public ResponseEntity<ApiV2Resp> postArticle(@RequestPart ArticleV2Req articleV2Req, @RequestPart("file") MultipartFile file) throws IOException, CommonApiException {
+    public ResponseEntity<ApiV2Resp> postArticle(@RequestPart @Valid ArticleV2Req articleV2Req, @RequestPart("file") MultipartFile file) throws IOException, CommonApiException {
         Article article = new Article();
         article.setTitle(articleV2Req.getTitle());
         article.setContent(articleV2Req.getContent());
@@ -41,12 +43,16 @@ public class ArticleV2Controller {
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiV2Resp> getArticle(@PathVariable("id") int id) throws CommonApiException {
-        articleService.getArticle(id);
-        return ResponseEntity.status(ApiRespPolicy.SUCCESS.getHttpStatus()).body(ApiV2Resp.of(ApiRespPolicy.SUCCESS));
+        Article article = articleService.getArticle(id);
+        ArticleV2Resp articleV2Resp = new ArticleV2Resp();
+        articleV2Resp.setTitle(article.getTitle());
+        articleV2Resp.setContent(article.getContent());
+
+        return ResponseEntity.status(ApiRespPolicy.SUCCESS.getHttpStatus()).body(ApiV2Resp.of(ApiRespPolicy.SUCCESS, articleV2Resp));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiV2Resp> updateArticle(@PathVariable("id") int id, @RequestPart ArticleV2Req articleV2Req) throws IOException, CommonApiException {
+    public ResponseEntity<ApiV2Resp> updateArticle(@PathVariable("id") int id, @RequestPart @Valid ArticleV2Req articleV2Req) throws IOException, CommonApiException {
         Article article = new Article();
         article.setTitle(articleV2Req.getTitle());
         article.setContent(articleV2Req.getContent());
@@ -56,7 +62,7 @@ public class ArticleV2Controller {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiV2Resp> deleteArticle(@PathVariable("id") int id) throws IOException, CommonApiException {
+    public ResponseEntity<ApiV2Resp> deleteArticle(@PathVariable("id") int id) throws CommonApiException {
         articleService.deleteArticle(id);
         return ResponseEntity.status(ApiRespPolicy.SUCCESS.getHttpStatus()).body(ApiV2Resp.of(ApiRespPolicy.SUCCESS));
     }

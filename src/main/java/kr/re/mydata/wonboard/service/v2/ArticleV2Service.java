@@ -55,6 +55,10 @@ public class ArticleV2Service {
                         // principal을 통해 받아온 이메일을 reg_user_id 저장
                         article.setRegUserId(userDetail.getUsername());
                         article.setUpdUserId(userDetail.getUsername());
+
+                        if(article.getTitle().length() > 100 || article.getContent().length() > 1000) {
+                            throw new CommonApiException(ApiRespPolicy.ERR_ARTICLE_NULL);
+                        }
                     } else {
                         throw new CommonApiException(ApiRespPolicy.ERR_ARTICLE_NULL);
                     }
@@ -129,14 +133,18 @@ public class ArticleV2Service {
                 String currentUserId = userDetails.getUsername();
                 logger.info("Current user id: " + currentUserId);
                 article.setUpdUserId(currentUserId);
+                if (article.getTitle().length() > 100 || article.getContent().length() > 1000) {
+                    throw new CommonApiException(ApiRespPolicy.ERR_TEXT_LENGTH_EXCEEDED);
+                }
             } else {
                 throw new CommonApiException(ApiRespPolicy.ERR_USER_NOT_LOGGED_IN);
             }
 
             return articleDAO.updateArticle(id, article);
+        } catch (CommonApiException e) {
+            throw e;
         } catch (Exception e) {
             logger.error("Failed to update article", e);
-            e.printStackTrace();
             throw new CommonApiException(ApiRespPolicy.ERR_DATABASE_NULL);
         }
     }
