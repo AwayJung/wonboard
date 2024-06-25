@@ -86,7 +86,7 @@ public class UserV2Service {
             String loginEmail = userReq.getLoginEmail();
             User userFromDB = userDAO.getUserByEmail(loginEmail);
             if (userFromDB == null || !passwordEncoder.matches(userReq.getPassword(), userFromDB.getPassword())) {
-                throw new CommonApiException(ApiRespPolicy.ERR_INVALID_USER);
+                throw new CommonApiException(ApiRespPolicy.ERR_NOT_AUTHORIZED);
             }
             String accessToken = jwtUtil.createAccessToken(userFromDB.getLoginEmail());
             String refreshToken = jwtUtil.createRefreshToken(userFromDB.getLoginEmail());
@@ -110,7 +110,7 @@ public class UserV2Service {
 
 
     @Transactional
-    public UserV2Resp refresh(String refreshToken) throws Exception {
+    public void refresh(String refreshToken) throws Exception {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String loginEmail = authentication.getName();
@@ -129,11 +129,11 @@ public class UserV2Service {
 
             userDAO.storeRefreshToken(loginEmail, newRefreshToken);
 
-            UserV2Resp userV2Resp = new UserV2Resp();
-            userV2Resp.setNewAccessToken(newAccessToken);
-            userV2Resp.setNewRefreshToken(newRefreshToken);
-
-            return userV2Resp;
+//            UserV2Resp userV2Resp = new UserV2Resp();
+//            userV2Resp.setAccessToken(newAccessToken);
+//            userV2Resp.setRefreshToken(newRefreshToken);
+//
+//            return userV2Resp;
 
         } catch (Exception e) {
             e.printStackTrace();

@@ -39,8 +39,8 @@ public class UserV2Controller {
 
     @PostMapping("/login")
     public ResponseEntity<ApiV2Resp> login(@RequestBody @Valid UserV2LoginReq userReq) throws Exception {
-        userService.login(userReq);
-        return ResponseEntity.status(ApiRespPolicy.SUCCESS.getHttpStatus()).body(ApiV2Resp.of(ApiRespPolicy.SUCCESS));
+        UserV2Resp result = userService.login(userReq);
+        return ResponseEntity.status(ApiRespPolicy.SUCCESS.getHttpStatus()).body(ApiV2Resp.of(ApiRespPolicy.SUCCESS, result));
     }
 
     @PostMapping("/refresh")
