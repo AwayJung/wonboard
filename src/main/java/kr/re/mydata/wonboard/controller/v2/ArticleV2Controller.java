@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/v2/articles")
@@ -37,8 +38,8 @@ public class ArticleV2Controller {
 
     @GetMapping("/list")
     public ResponseEntity<ApiV2Resp> getArticleList() throws CommonApiException {
-        articleService.getArticleList();
-        return ResponseEntity.status(ApiRespPolicy.SUCCESS.getHttpStatus()).body(ApiV2Resp.of(ApiRespPolicy.SUCCESS));
+        List result= articleService.getArticleList();
+        return ResponseEntity.status(ApiRespPolicy.SUCCESS.getHttpStatus()).body(ApiV2Resp.of(ApiRespPolicy.SUCCESS, result));
     }
 
     @GetMapping("/{id}")
@@ -52,7 +53,7 @@ public class ArticleV2Controller {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiV2Resp> updateArticle(@PathVariable("id") int id, @RequestPart @Valid ArticleV2Req articleV2Req) throws IOException, CommonApiException {
+    public ResponseEntity<ApiV2Resp> updateArticle(@PathVariable("id") int id, @RequestPart @Valid ArticleV2Req articleV2Req) throws CommonApiException {
         Article article = new Article();
         article.setTitle(articleV2Req.getTitle());
         article.setContent(articleV2Req.getContent());

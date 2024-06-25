@@ -101,9 +101,9 @@ public class ArticleV2Service {
     }
 
     @Transactional
-    public void getArticleList() throws CommonApiException {
+    public List getArticleList() throws CommonApiException {
         try {
-            articleDAO.getArticleList();
+            return articleDAO.getArticleList();
 
         } catch (Exception e) {
             logger.error("Failed to get article list", e);
