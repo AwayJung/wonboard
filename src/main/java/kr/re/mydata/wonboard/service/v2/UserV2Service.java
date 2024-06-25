@@ -18,8 +18,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletRequest;
-
 @Service
 public class UserV2Service {
     private static final Logger logger = LoggerFactory.getLogger(UserV2Service.class);
@@ -112,14 +110,14 @@ public class UserV2Service {
 
 
     @Transactional
-    public UserV2Resp refresh() throws Exception {
+    public UserV2Resp refresh(String refreshToken) throws Exception {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String loginEmail = authentication.getName();
 
             String storedRefreshToken = userDAO.getStoredRefreshToken(loginEmail);
 
-            if (storedRefreshToken == null) {
+            if (storedRefreshToken == null || !storedRefreshToken.equals(refreshToken)) {
                 throw new CommonApiException(ApiRespPolicy.ERR_INVALID_REFRESH_TOKEN);
             }
 
@@ -128,6 +126,7 @@ public class UserV2Service {
 
             logger.info("New Access Token: {}", newAccessToken);
             logger.info("New Refresh Token: {}", newRefreshToken);
+
             userDAO.storeRefreshToken(loginEmail, newRefreshToken);
 
             UserV2Resp userV2Resp = new UserV2Resp();

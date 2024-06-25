@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 
 @RestController
@@ -44,8 +44,10 @@ public class UserV2Controller {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<ApiV2Resp> refresh() throws Exception {
-        userService.refresh();
+    public ResponseEntity<ApiV2Resp> refresh(HttpServletRequest request) throws Exception {
+        String refreshToken = request.getHeader("refreshToken");
+        userService.refresh(refreshToken);
         return ResponseEntity.status(ApiRespPolicy.SUCCESS_ISSUE_TOKEN.getHttpStatus()).body(ApiV2Resp.of(ApiRespPolicy.SUCCESS_ISSUE_TOKEN));
     }
+
 }
