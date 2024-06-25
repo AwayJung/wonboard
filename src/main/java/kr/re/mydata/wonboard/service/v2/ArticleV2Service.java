@@ -38,7 +38,7 @@ public class ArticleV2Service {
     private JwtUtil jwtUtil;
 
     @Transactional
-    public Article postArticle(Article article, MultipartFile file) throws IOException, CommonApiException {
+    public void postArticle(Article article, MultipartFile file) throws IOException, CommonApiException {
         try {
             Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 //            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -92,7 +92,7 @@ public class ArticleV2Service {
                 attachDAO.postAttach(attach);
                 logger.info("Attach posted successfully" + attach);
             }
-            return article;
+//            return article;
         } catch (Exception e) {
             logger.error("Failed to post article", e);
             e.printStackTrace();
@@ -101,9 +101,9 @@ public class ArticleV2Service {
     }
 
     @Transactional
-    public List getArticleList() throws CommonApiException {
+    public void getArticleList() throws CommonApiException {
         try {
-            return articleDAO.getArticleList();
+            articleDAO.getArticleList();
 
         } catch (Exception e) {
             logger.error("Failed to get article list", e);
@@ -125,7 +125,7 @@ public class ArticleV2Service {
     }
 
     @Transactional
-    public int updateArticle(int id, Article article) throws CommonApiException {
+    public void updateArticle(int id, Article article) throws CommonApiException {
         try {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             if (auth.getPrincipal() instanceof UserDetails) {
@@ -140,7 +140,7 @@ public class ArticleV2Service {
                 throw new CommonApiException(ApiRespPolicy.ERR_USER_NOT_LOGGED_IN);
             }
 
-            return articleDAO.updateArticle(id, article);
+            articleDAO.updateArticle(id, article);
         } catch (CommonApiException e) {
             throw e;
         } catch (Exception e) {
@@ -150,7 +150,7 @@ public class ArticleV2Service {
     }
 
     @Transactional
-    public int deleteArticle(int id) throws CommonApiException {
+    public void deleteArticle(int id) throws CommonApiException {
         try {
             String username;
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -167,7 +167,7 @@ public class ArticleV2Service {
             if (!article.getRegUserId().equals(username)) {
                 throw new CommonApiException(ApiRespPolicy.ERR_USER_NOT_LOGGED_IN);
             }
-            return articleDAO.deleteArticle(id);
+            articleDAO.deleteArticle(id);
         }catch (Exception e) {
             logger.error("Failed to delete article", e);
             throw new CommonApiException(ApiRespPolicy.ERR_SYSTEM);
