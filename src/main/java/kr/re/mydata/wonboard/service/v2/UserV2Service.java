@@ -110,7 +110,7 @@ public class UserV2Service {
 
 
     @Transactional
-    public void refresh(String refreshToken) throws Exception {
+    public UserV2Resp refresh(String refreshToken) throws Exception {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String loginEmail = authentication.getName();
@@ -129,11 +129,11 @@ public class UserV2Service {
 
             userDAO.storeRefreshToken(loginEmail, newRefreshToken);
 
-//            UserV2Resp userV2Resp = new UserV2Resp();
-//            userV2Resp.setAccessToken(newAccessToken);
-//            userV2Resp.setRefreshToken(newRefreshToken);
-//
-//            return userV2Resp;
+            UserV2Resp userV2Resp = new UserV2Resp();
+            userV2Resp.setAccessToken(newAccessToken);
+            userV2Resp.setRefreshToken(newRefreshToken);
+
+            return userV2Resp;
 
         } catch (Exception e) {
             e.printStackTrace();
