@@ -46,8 +46,8 @@ public class UserV2Controller {
     @PostMapping("/refresh")
     public ResponseEntity<ApiV2Resp> refresh(HttpServletRequest request) throws Exception {
         String refreshToken = request.getHeader("refreshToken");
-        userService.refresh(refreshToken);
-        return ResponseEntity.status(ApiRespPolicy.SUCCESS_ISSUE_TOKEN.getHttpStatus()).body(ApiV2Resp.of(ApiRespPolicy.SUCCESS_ISSUE_TOKEN));
+        UserV2Resp result = userService.refresh(refreshToken);
+        return ResponseEntity.status(ApiRespPolicy.SUCCESS_ISSUE_TOKEN.getHttpStatus()).body(ApiV2Resp.of(ApiRespPolicy.SUCCESS_ISSUE_TOKEN, result));
     }
 
 }
