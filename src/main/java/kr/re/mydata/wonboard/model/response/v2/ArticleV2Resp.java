@@ -17,4 +17,6 @@ import java.time.LocalDateTime;
         private LocalDateTime regDt;
         @JsonInclude(JsonInclude.Include.NON_EMPTY)
         private  LocalDateTime updDt;
+        @JsonInclude(JsonInclude.Include.NON_EMPTY)
+        private int id;
 }

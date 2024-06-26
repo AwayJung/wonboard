@@ -48,6 +48,8 @@ public class ArticleV2Controller {
         ArticleV2Resp articleV2Resp = new ArticleV2Resp();
         articleV2Resp.setTitle(article.getTitle());
         articleV2Resp.setContent(article.getContent());
+        articleV2Resp.setRegUserId(article.getRegUserId());
+        articleV2Resp.setId(article.getId());
 
         return ResponseEntity.status(ApiRespPolicy.SUCCESS.getHttpStatus()).body(ApiV2Resp.of(ApiRespPolicy.SUCCESS, articleV2Resp));
     }
