@@ -1,6 +1,9 @@
 package kr.re.mydata.wonboard.common.config;
 
 import kr.re.mydata.wonboard.model.db.User;
+import kr.re.mydata.wonboard.service.v2.ArticleV2Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

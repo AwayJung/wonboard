@@ -1,6 +1,8 @@
 package kr.re.mydata.wonboard.dao;
 
 import kr.re.mydata.wonboard.model.db.Article;
+import kr.re.mydata.wonboard.model.response.v2.DetailV2Resp;
+import kr.re.mydata.wonboard.model.response.v2.ListV2Resp;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -9,11 +11,11 @@ import java.util.List;
 public interface ArticleDAO {
     int postArticle(Article article);
 
-    List<Article> getArticleList();
+    List<ListV2Resp> getList();
 
-    Article getArticle(int id);
+    DetailV2Resp getDetail(int id);
 
-    int updateArticle(int id, Article article);
+    int update(int id, Article article);
 
-    int deleteArticle(int id);
+    int delete(int id);
 }

@@ -3,24 +3,30 @@
 
 <mapper namespace="kr.re.mydata.wonboard.dao.ArticleDAO">
     <insert id="postArticle" parameterType="kr.re.mydata.wonboard.model.db.Article" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO post (id, title, content, reg_dt, upd_dt, reg_user_id, upd_user_id)
+        INSERT INTO article (id, title, content, reg_dt, upd_dt, reg_user_id, upd_user_id)
         VALUES (#{id}, #{title}, #{content}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, #{regUserId}, #{updUserId})
     </insert>
 
-    <select id="getArticleList" resultType="kr.re.mydata.wonboard.model.db.Article">
-        SELECT * FROM post ORDER BY reg_dt DESC;
+    <select id="getList" resultType="kr.re.mydata.wonboard.model.response.v2.ListV2Resp">
+        SELECT u.name AS writer, a.title AS title, a.content AS content
+        FROM article a
+                 JOIN user u ON a.reg_user_id = u.id
+        ORDER BY a.reg_dt DESC;
     </select>
 
-    <select id="getArticle" parameterType="int" resultType="kr.re.mydata.wonboard.model.db.Article">
-        SELECT * FROM post WHERE id = #{id};
+    <select id="getDetail" parameterType="int" resultType="kr.re.mydata.wonboard.model.response.v2.DetailV2Resp">
+        SELECT u.name AS writer, a.title AS title, a.content AS content
+        FROM article a
+                 JOIN user u ON a.reg_user_id = u.id
+        WHERE a.id = #{id};
     </select>
 
-    <update id="updateArticle" parameterType="kr.re.mydata.wonboard.model.db.Article">
-        UPDATE post SET title = #{article.title}, content = #{article.content}, upd_dt = CURRENT_TIMESTAMP, upd_user_id = #{article.updUserId} WHERE id = #{id};
+    <update id="update" parameterType="kr.re.mydata.wonboard.model.db.Article">
+        UPDATE article SET title = #{article.title}, content = #{article.content}, upd_dt = CURRENT_TIMESTAMP, upd_user_id = #{article.updUserId} WHERE id = #{id};
     </update>
 
-    <delete id="deleteArticle" parameterType="int">
-        DELETE FROM post WHERE id = #{id};
+    <delete id="delete" parameterType="int">
+        DELETE FROM article WHERE id = #{id};
     </delete>
 
 </mapper>

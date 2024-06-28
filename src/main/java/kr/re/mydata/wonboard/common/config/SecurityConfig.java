@@ -62,14 +62,14 @@ public class SecurityConfig {
                         .dispatcherTypeMatchers().permitAll()
                         .requestMatchers(
                                 new AntPathRequestMatcher("/user/signup"),
+                                new AntPathRequestMatcher("/user/login"),
                                 new AntPathRequestMatcher("/v2/users/signup"),
                                 new AntPathRequestMatcher("/v2/users/signup-example"),
-                                new AntPathRequestMatcher("/user/login"),
-                                new AntPathRequestMatcher("/v2/users/login"),
-                                new AntPathRequestMatcher("/v2/users/refresh")
+                                new AntPathRequestMatcher("/v2/users/login")
                         ).permitAll()
                         .requestMatchers(
                                 new AntPathRequestMatcher("/article/**"),
+                                new AntPathRequestMatcher("/v2/users/refresh"),
                                 new AntPathRequestMatcher("/v2/articles/**")
                         ).authenticated()
                         .anyRequest().authenticated()

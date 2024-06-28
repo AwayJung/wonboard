@@ -10,11 +10,11 @@
     </insert>
 
     <select id="getUserByEmail" parameterType="string" resultType="kr.re.mydata.wonboard.model.db.User">
-        SELECT login_email AS "loginEmail", password FROM user WHERE login_email = #{loginEmail}
+        SELECT id , name , login_email AS "loginEmail", password FROM user WHERE login_email = #{loginEmail}
     </select>
 
-    <update id="updateRefreshToken" parameterType="kr.re.mydata.wonboard.model.db.User">
-        UPDATE  user SET refresh_token = #{refreshToken}, refresh_token_issue_dt = CURRENT_TIMESTAMP WHERE  login_email = #{loginEmail}
+    <update id="updateRefreshToken" >
+        UPDATE user SET refresh_token = #{refreshToken}, refresh_token_issue_dt = CURRENT_TIMESTAMP WHERE login_email = #{loginEmail}
     </update>
 
     <update id="storeRefreshToken" >

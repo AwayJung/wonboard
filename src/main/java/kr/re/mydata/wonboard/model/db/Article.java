@@ -11,6 +11,6 @@ public class Article {
     private String content;
     private LocalDateTime regDt;
     private LocalDateTime modDt;
-    private String regUserId;
-    private String updUserId;
+    private int regUserId;
+    private int updUserId;
 }

@@ -7,8 +7,12 @@ import kr.re.mydata.wonboard.common.exception.CommonApiException;
 import kr.re.mydata.wonboard.common.jwt.JwtUtil;
 import kr.re.mydata.wonboard.dao.ArticleDAO;
 import kr.re.mydata.wonboard.dao.AttachDAO;
+import kr.re.mydata.wonboard.dao.UserDAO;
 import kr.re.mydata.wonboard.model.db.Article;
 import kr.re.mydata.wonboard.model.db.Attach;
+import kr.re.mydata.wonboard.model.db.User;
+import kr.re.mydata.wonboard.model.response.v2.DetailV2Resp;
+import kr.re.mydata.wonboard.model.response.v2.ListV2Resp;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -31,34 +35,32 @@ public class ArticleV2Service {
 
     @Autowired
     private ArticleDAO articleDAO;
-
+    @Autowired
+    private UserDAO userDAO;
     @Autowired
     private AttachDAO attachDAO;
     @Autowired
     private JwtUtil jwtUtil;
 
     @Transactional
-    public void postArticle(Article article, MultipartFile file) throws IOException, CommonApiException {
+    public void post(Article article, MultipartFile file) throws CommonApiException {
         try {
             Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-//            String token = (String) auth.getCredentials();
             logger.info("Principal: " + principal);
             if (principal instanceof UserDetail) {
                 UserDetail userDetail = (UserDetail) principal;
                 logger.info("userDetail: " + userDetail.getUsername());
                 if (userDetail != null && userDetail.getUsername() != null) {
-//                    if (!jwtUtil.isTokenValid(token)) {
-//                        throw new CommonApiException(ApiRespPolicy.ERR_TOKEN_EXPIRED);
-//                    }
+                    String loginEmail = userDetail.getUsername();
+                    User user = userDAO.getUserByEmail(loginEmail);
+                    if (user == null) {
+                        throw new CommonApiException(ApiRespPolicy.ERR_USERDETAIL_NULL);
+                    }
+                    int userId = user.getId();
+                    logger.info("User ID: " + userId);
                     if (article != null) {
-                        // principal을 통해 받아온 이메일을 reg_user_id 저장
-                        article.setRegUserId(userDetail.getUsername());
-                        article.setUpdUserId(userDetail.getUsername());
-
-                        if(article.getTitle().length() > 100 || article.getContent().length() > 1000) {
-                            throw new CommonApiException(ApiRespPolicy.ERR_ARTICLE_NULL);
-                        }
+                        article.setRegUserId(userId);
+                        article.setUpdUserId(userId);
                     } else {
                         throw new CommonApiException(ApiRespPolicy.ERR_ARTICLE_NULL);
                     }
@@ -67,6 +69,7 @@ public class ArticleV2Service {
                 }
             } else {
                 throw new CommonApiException(ApiRespPolicy.ERR_USER_NOT_LOGGED_IN);
+
             }
 
             // Article 저장
@@ -100,10 +103,10 @@ public class ArticleV2Service {
         }
     }
 
-    @Transactional
-    public List getArticleList() throws CommonApiException {
+    @Transactional(readOnly = true)
+    public List<ListV2Resp> getList() throws CommonApiException {
         try {
-            return articleDAO.getArticleList();
+            return articleDAO.getList();
 
         } catch (Exception e) {
             logger.error("Failed to get article list", e);
@@ -113,10 +116,10 @@ public class ArticleV2Service {
         }
     }
 
-    @Transactional
-    public Article getArticle(int id) throws CommonApiException {
+    @Transactional(readOnly = true)
+    public DetailV2Resp getDetail(int id) throws CommonApiException {
         try {
-            return articleDAO.getArticle(id);
+            return articleDAO.getDetail(id);
         } catch (Exception e) {
             logger.error("Failed to get article", e);
             e.printStackTrace();
@@ -125,14 +128,18 @@ public class ArticleV2Service {
     }
 
     @Transactional
-    public void updateArticle(int id, Article article) throws CommonApiException {
+    public void update(int postId, Article article, MultipartFile newFile, boolean deleteFile) throws CommonApiException {
         try {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             if (auth.getPrincipal() instanceof UserDetails) {
                 UserDetails userDetails = (UserDetails) auth.getPrincipal();
                 String currentUserId = userDetails.getUsername();
                 logger.info("Current user id: " + currentUserId);
-                article.setUpdUserId(currentUserId);
+                User user = userDAO.getUserByEmail(currentUserId);
+
+                int modUserId = user.getId();
+
+                article.setUpdUserId(modUserId);
                 if (article.getTitle().length() > 100 || article.getContent().length() > 1000) {
                     throw new CommonApiException(ApiRespPolicy.ERR_TEXT_LENGTH_EXCEEDED);
                 }
@@ -140,7 +147,33 @@ public class ArticleV2Service {
                 throw new CommonApiException(ApiRespPolicy.ERR_USER_NOT_LOGGED_IN);
             }
 
-            articleDAO.updateArticle(id, article);
+            // deleteFile이 true이면 기존 첨부파일 삭제
+            Attach existingAttach = attachDAO.getAttach(postId);
+            if (deleteFile && existingAttach != null) {
+                File existingFile = new File(existingAttach.getPath());
+                if (existingFile.exists()) {
+                    existingFile.delete();
+                }
+                attachDAO.deleteAttach(postId);
+            }
+
+            // newFile이 있으면 새로운 첨부파일 저장
+            if (newFile != null && !newFile.isEmpty()) {
+                String fileName = UUID.randomUUID().toString() + "_" + newFile.getOriginalFilename();
+                File serverFile = new File("D:/workspaces/spring/images/" + fileName);
+                newFile.transferTo(serverFile);
+
+                Attach newAttach = new Attach();
+                newAttach.setRealName(newFile.getOriginalFilename());
+                newAttach.setName(fileName);
+                newAttach.setPath(serverFile.getAbsolutePath());
+                newAttach.setPostId(postId);
+
+                attachDAO.postAttach(newAttach);
+                logger.info("Attach posted successfully" + newAttach);
+            }
+
+            articleDAO.update(postId, article);
         } catch (CommonApiException e) {
             throw e;
         } catch (Exception e) {
@@ -150,24 +183,28 @@ public class ArticleV2Service {
     }
 
     @Transactional
-    public void deleteArticle(int id) throws CommonApiException {
+    public void delete(int id) throws CommonApiException {
         try {
-            String username;
+            String userName = null;
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             if (auth.getPrincipal() instanceof UserDetails) {
                 UserDetails userDetails = (UserDetails) auth.getPrincipal();
-                username = userDetails.getUsername();
+                userName = userDetails.getUsername();
+                logger.info("userName: " + userName);
+
             } else {
                 throw new CommonApiException(ApiRespPolicy.ERR_USER_NOT_LOGGED_IN);
             }
-            Article article = articleDAO.getArticle(id);
+            DetailV2Resp article = articleDAO.getDetail(id);
+            logger.info("writer: " + article.getWriter());
+
             if (article == null) {
                 throw new CommonApiException(ApiRespPolicy.ERR_ARTICLE_NULL);
             }
-            if (!article.getRegUserId().equals(username)) {
+            if (!article.getWriter().equals(userName)) {
                 throw new CommonApiException(ApiRespPolicy.ERR_USER_NOT_LOGGED_IN);
             }
-            articleDAO.deleteArticle(id);
+            articleDAO.delete(id);
         }catch (Exception e) {
             logger.error("Failed to delete article", e);
             throw new CommonApiException(ApiRespPolicy.ERR_SYSTEM);
