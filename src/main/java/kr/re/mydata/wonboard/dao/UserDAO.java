@@ -13,7 +13,7 @@ public interface UserDAO {
 
     User getUserByEmail(@Param(value = "loginEmail") String loginEmail);
 
-    void updateRefreshToken(User userFromDB);
+    int updateRefreshToken(@Param("loginEmail") String loginEmail, @Param("refreshToken") String refreshToken);
 
     void storeRefreshToken(@Param("loginEmail") String loginEmail, @Param("newRefreshToken") String newRefreshToken);
 

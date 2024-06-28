@@ -7,6 +7,8 @@ import kr.re.mydata.wonboard.common.model.response.ApiV2Resp;
 import kr.re.mydata.wonboard.model.db.Article;
 import kr.re.mydata.wonboard.model.request.v2.ArticleV2Req;
 import kr.re.mydata.wonboard.model.response.v2.ArticleV2Resp;
+import kr.re.mydata.wonboard.model.response.v2.DetailV2Resp;
+import kr.re.mydata.wonboard.model.response.v2.ListV2Resp;
 import kr.re.mydata.wonboard.service.v2.ArticleV2Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,47 +28,48 @@ public class ArticleV2Controller {
     @Autowired
     private ArticleV2Service articleService;
 
-    @PostMapping("/post")
-    public ResponseEntity<ApiV2Resp> postArticle(@RequestPart @Valid ArticleV2Req articleV2Req, @RequestPart("file") MultipartFile file) throws IOException, CommonApiException {
+    @PostMapping("/")
+    public ResponseEntity<ApiV2Resp> post(@RequestPart @Valid ArticleV2Req articleV2Req, @RequestPart("file") MultipartFile file) throws IOException, CommonApiException {
         Article article = new Article();
         article.setTitle(articleV2Req.getTitle());
         article.setContent(articleV2Req.getContent());
 
-        articleService .postArticle(article, file);
+        articleService .post(article, file);
         return ResponseEntity.status(ApiRespPolicy.SUCCESS_CREATED.getHttpStatus()).body(ApiV2Resp.of(ApiRespPolicy.SUCCESS_CREATED));
     }
 
-    @GetMapping("/list")
+    @GetMapping("/")
     public ResponseEntity<ApiV2Resp> getArticleList() throws CommonApiException {
-        List result= articleService.getArticleList();
+        List<ListV2Resp> result= articleService.getList();
         return ResponseEntity.status(ApiRespPolicy.SUCCESS.getHttpStatus()).body(ApiV2Resp.of(ApiRespPolicy.SUCCESS, result));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiV2Resp> getArticle(@PathVariable("id") int id) throws CommonApiException {
-        Article article = articleService.getArticle(id);
-        ArticleV2Resp articleV2Resp = new ArticleV2Resp();
-        articleV2Resp.setTitle(article.getTitle());
-        articleV2Resp.setContent(article.getContent());
-        articleV2Resp.setRegUserId(article.getRegUserId());
-        articleV2Resp.setId(article.getId());
+        DetailV2Resp detail = articleService.getDetail(id);
+//        DetailV2Resp detailV2Resp = new DetailV2Resp();
+//
+//        detailV2Resp.setTitle(article.getTitle());
+//        detailV2Resp.setContent(article.getContent());
+//        detailV2Resp.setWriter(article.getWriter());
+//        detailV2Resp.setId(article.getId());
 
-        return ResponseEntity.status(ApiRespPolicy.SUCCESS.getHttpStatus()).body(ApiV2Resp.of(ApiRespPolicy.SUCCESS, articleV2Resp));
+        return ResponseEntity.status(ApiRespPolicy.SUCCESS.getHttpStatus()).body(ApiV2Resp.of(ApiRespPolicy.SUCCESS, detail));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiV2Resp> updateArticle(@PathVariable("id") int id, @RequestPart @Valid ArticleV2Req articleV2Req) throws CommonApiException {
+    public ResponseEntity<ApiV2Resp> updateArticle(@PathVariable("id") int postId, @RequestPart @Valid ArticleV2Req articleV2Req, @RequestPart("file") MultipartFile file, @RequestPart("deleteFile") boolean deleteFile) throws CommonApiException {
         Article article = new Article();
         article.setTitle(articleV2Req.getTitle());
         article.setContent(articleV2Req.getContent());
 
-        articleService.updateArticle(id, article);
+        articleService.update(postId, article, file, deleteFile);
         return ResponseEntity.status(ApiRespPolicy.SUCCESS.getHttpStatus()).body(ApiV2Resp.of(ApiRespPolicy.SUCCESS));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiV2Resp> deleteArticle(@PathVariable("id") int id) throws CommonApiException {
-        articleService.deleteArticle(id);
+        articleService.delete(id);
         return ResponseEntity.status(ApiRespPolicy.SUCCESS.getHttpStatus()).body(ApiV2Resp.of(ApiRespPolicy.SUCCESS));
     }
 }

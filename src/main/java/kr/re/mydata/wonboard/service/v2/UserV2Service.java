@@ -82,17 +82,28 @@ public class UserV2Service {
     @Transactional
     public UserV2Resp login(UserV2LoginReq userReq) throws Exception {
         try {
+            String loginEmail = userReq.getLoginEmail();// 현재 로그인 되어있는 사용자의 이메일임
+            User userFromDB = userDAO.getUserByEmail(loginEmail); // DB에서 현재 로그인 되어있는 사용자 정보를 가져옴
+            logger.info("userFromDB: {}", userFromDB);
 
-            String loginEmail = userReq.getLoginEmail();
-            User userFromDB = userDAO.getUserByEmail(loginEmail);
             if (userFromDB == null || !passwordEncoder.matches(userReq.getPassword(), userFromDB.getPassword())) {
                 throw new CommonApiException(ApiRespPolicy.ERR_NOT_AUTHORIZED);
             }
+            // access token, refresh token 발급
             String accessToken = jwtUtil.createAccessToken(userFromDB.getLoginEmail());
             String refreshToken = jwtUtil.createRefreshToken(userFromDB.getLoginEmail());
-            userFromDB.setRefreshToken(refreshToken);
-            userDAO.updateRefreshToken(userFromDB);
 
+            // user객체에 refresh token 저장
+            logger.info("전userFromDB: {}", userFromDB.getRefreshToken());
+            userFromDB.setRefreshToken(refreshToken);
+            logger.info("후userFromDB: {}", userFromDB.getRefreshToken());
+            // DB에 저장
+            int updateResult = userDAO.updateRefreshToken(userFromDB.getLoginEmail(), userFromDB.getRefreshToken());
+            if(updateResult == 0) {
+             logger.info("refresh token update 실패");
+            }
+            logger.info("userFromDB: {}", userFromDB.getLoginEmail());
+            logger.info("Login Email: {}", loginEmail);
             logger.info("Access Token: {}", accessToken);
             logger.info("Refresh Token: {}", refreshToken);
 
@@ -112,10 +123,11 @@ public class UserV2Service {
     @Transactional
     public UserV2Resp refresh(String refreshToken) throws Exception {
         try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String loginEmail = authentication.getName();
+            String loginEmail = jwtUtil.extractLoginEmail(refreshToken);
+            logger.info("Login Email: {}", loginEmail);
 
             String storedRefreshToken = userDAO.getStoredRefreshToken(loginEmail);
+            logger.info("Stored Refresh Token: {}", storedRefreshToken);
 
             if (storedRefreshToken == null || !storedRefreshToken.equals(refreshToken)) {
                 throw new CommonApiException(ApiRespPolicy.ERR_INVALID_REFRESH_TOKEN);

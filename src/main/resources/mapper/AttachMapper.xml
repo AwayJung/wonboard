@@ -6,4 +6,12 @@
         INSERT INTO attachment (path,real_name,post_id,reg_dt,name)
         VALUES (#{path}, #{realName}, #{postId}, CURRENT_TIMESTAMP, #{name})
     </insert>
+
+    <select id="getAttach" parameterType="int" resultType="kr.re.mydata.wonboard.model.db.Attach">
+       SELECT * FROM attachment WHERE post_id = #{postId};
+    </select>
+
+    <delete id="deleteAttach" parameterType="int">
+        DELETE FROM attachment WHERE post_id = #{postId};
+    </delete>
 </mapper>
