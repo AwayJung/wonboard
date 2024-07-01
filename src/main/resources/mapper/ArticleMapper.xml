@@ -8,18 +8,26 @@
     </insert>
 
     <select id="getList" resultType="kr.re.mydata.wonboard.model.response.v2.ListV2Resp">
-        SELECT u.name AS writer, a.title AS title, a.content AS content
+        SELECT a.id AS id, u.name AS writer, a.title AS title, a.content AS content
         FROM article a
                  JOIN user u ON a.reg_user_id = u.id
         ORDER BY a.reg_dt DESC;
     </select>
 
     <select id="getDetail" parameterType="int" resultType="kr.re.mydata.wonboard.model.response.v2.DetailV2Resp">
-        SELECT u.name AS writer, a.title AS title, a.content AS content
+        SELECT a.id AS id,u.name AS writer, a.title AS title, a.content AS content
         FROM article a
                  JOIN user u ON a.reg_user_id = u.id
         WHERE a.id = #{id};
     </select>
+
+    <select id="getDeleteDetail" parameterType="int" resultType="kr.re.mydata.wonboard.model.response.v2.DeleteV2Resp">
+        SELECT a.id AS id, u.login_email AS loginEmail
+        FROM article a
+                 JOIN user u ON a.reg_user_id = u.id
+        WHERE a.id = #{id};
+    </select>
+
 
     <update id="update" parameterType="kr.re.mydata.wonboard.model.db.Article">
         UPDATE article SET title = #{article.title}, content = #{article.content}, upd_dt = CURRENT_TIMESTAMP, upd_user_id = #{article.updUserId} WHERE id = #{id};
