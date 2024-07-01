@@ -130,7 +130,7 @@ public class ArticleV2Service {
     }
 
     @Transactional
-    public void update(int postId, @RequestBody Article article, MultipartFile newFile, boolean deleteFile) throws CommonApiException {
+    public void update(int postId, @RequestBody Article article, MultipartFile newFile) throws CommonApiException {
         try {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             if (auth.getPrincipal() instanceof UserDetails) {
@@ -142,25 +142,23 @@ public class ArticleV2Service {
                 int modUserId = user.getId();
 
                 article.setUpdUserId(modUserId);
-                if (article.getTitle().length() > 100 || article.getContent().length() > 1000) {
-                    throw new CommonApiException(ApiRespPolicy.ERR_TEXT_LENGTH_EXCEEDED);
-                }
             } else {
                 throw new CommonApiException(ApiRespPolicy.ERR_USER_NOT_LOGGED_IN);
             }
 
-            // deleteFile이 true이면 기존 첨부파일 삭제
-            Attach existingAttach = attachDAO.getAttach(postId);
-            if (deleteFile && existingAttach != null) {
-                File existingFile = new File(existingAttach.getPath());
-                if (existingFile.exists()) {
-                    existingFile.delete();
-                }
-                attachDAO.deleteAttach(postId);
-            }
-
-            // newFile이 있으면 새로운 첨부파일 저장
+            // newFile이 있으면 기존 첨부파일 삭제 후 새로운 첨부파일 저장
             if (newFile != null && !newFile.isEmpty()) {
+                // 기존 첨부파일 삭제
+                Attach existingAttach = attachDAO.getAttach(postId);
+                if (existingAttach != null) {
+                    File existingFile = new File(existingAttach.getPath());
+                    if (existingFile.exists()) {
+                        existingFile.delete();
+                    }
+                    attachDAO.deleteAttach(postId);
+                }
+
+                // 새로운 첨부파일 저장
                 String fileName = UUID.randomUUID().toString() + "_" + newFile.getOriginalFilename();
                 File serverFile = new File("D:/workspaces/spring/images/" + fileName);
                 newFile.transferTo(serverFile);

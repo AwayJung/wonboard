@@ -58,12 +58,12 @@ public class ArticleV2Controller {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiV2Resp> updateArticle(@PathVariable("id") int postId, @RequestPart @Valid ArticleV2Req articleV2Req, @RequestPart("newFile") MultipartFile newFile, @RequestPart("deleteFile") boolean deleteFile) throws CommonApiException {
+    public ResponseEntity<ApiV2Resp> updateArticle(@PathVariable("id") int postId, @RequestPart @Valid ArticleV2Req articleV2Req, @RequestPart(value = "newFile", required = false) MultipartFile newFile) throws CommonApiException {
         Article article = new Article();
         article.setTitle(articleV2Req.getTitle());
         article.setContent(articleV2Req.getContent());
 
-        articleService.update(postId, article, newFile, deleteFile);
+        articleService.update(postId, article, newFile);
         return ResponseEntity.status(ApiRespPolicy.SUCCESS.getHttpStatus()).body(ApiV2Resp.of(ApiRespPolicy.SUCCESS));
     }
 
