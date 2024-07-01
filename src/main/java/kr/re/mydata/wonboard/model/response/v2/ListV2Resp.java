@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class ListV2Resp {
+    private int id;
     private String writer;
     private String title;
     private String content;

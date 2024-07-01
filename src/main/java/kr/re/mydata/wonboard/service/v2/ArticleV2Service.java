@@ -11,6 +11,7 @@ import kr.re.mydata.wonboard.dao.UserDAO;
 import kr.re.mydata.wonboard.model.db.Article;
 import kr.re.mydata.wonboard.model.db.Attach;
 import kr.re.mydata.wonboard.model.db.User;
+import kr.re.mydata.wonboard.model.response.v2.DeleteV2Resp;
 import kr.re.mydata.wonboard.model.response.v2.DetailV2Resp;
 import kr.re.mydata.wonboard.model.response.v2.ListV2Resp;
 import org.slf4j.LoggerFactory;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import org.slf4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -128,7 +130,7 @@ public class ArticleV2Service {
     }
 
     @Transactional
-    public void update(int postId, Article article, MultipartFile newFile, boolean deleteFile) throws CommonApiException {
+    public void update(int postId, @RequestBody Article article, MultipartFile newFile, boolean deleteFile) throws CommonApiException {
         try {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             if (auth.getPrincipal() instanceof UserDetails) {
@@ -195,13 +197,13 @@ public class ArticleV2Service {
             } else {
                 throw new CommonApiException(ApiRespPolicy.ERR_USER_NOT_LOGGED_IN);
             }
-            DetailV2Resp article = articleDAO.getDetail(id);
-            logger.info("writer: " + article.getWriter());
+            DeleteV2Resp article = articleDAO.getDeleteDetail(id);
+            logger.info("writer: " + article.getLoginEmail());
 
             if (article == null) {
                 throw new CommonApiException(ApiRespPolicy.ERR_ARTICLE_NULL);
             }
-            if (!article.getWriter().equals(userName)) {
+            if (!article.getLoginEmail().equals(userName)) {
                 throw new CommonApiException(ApiRespPolicy.ERR_USER_NOT_LOGGED_IN);
             }
             articleDAO.delete(id);
