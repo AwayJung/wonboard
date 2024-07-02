@@ -61,7 +61,7 @@ public class ArticleV2Service {
                     String loginEmail = userDetail.getUsername();
                     User user = userDAO.getUserByEmail(loginEmail);
                     if (user == null) {
-                        throw new CommonApiException(ApiRespPolicy.ERR_USERDETAIL_NULL);
+                        throw new CommonApiException(ApiRespPolicy.ERR_USERDETAIL_NOT_FOUND);
                     }
                     int userId = user.getId();
                     logger.info("User ID: " + userId);
@@ -69,10 +69,10 @@ public class ArticleV2Service {
                         article.setRegUserId(userId);
                         article.setUpdUserId(userId);
                     } else {
-                        throw new CommonApiException(ApiRespPolicy.ERR_ARTICLE_NULL);
+                        throw new CommonApiException(ApiRespPolicy.ERR_ARTICLE_NOT_FOUND);
                     }
                 } else {
-                    throw new CommonApiException(ApiRespPolicy.ERR_USERDETAIL_NULL);
+                    throw new CommonApiException(ApiRespPolicy.ERR_USERDETAIL_NOT_FOUND);
                 }
             } else {
                 throw new CommonApiException(ApiRespPolicy.ERR_USER_NOT_LOGGED_IN);
@@ -190,7 +190,7 @@ public class ArticleV2Service {
             throw e;
         } catch (Exception e) {
             logger.error("Failed to update article", e);
-            throw new CommonApiException(ApiRespPolicy.ERR_DATABASE_NULL);
+            throw new CommonApiException(ApiRespPolicy.ERR_DATABASE_NOT_FOUND);
         }
     }
 
@@ -211,7 +211,7 @@ public class ArticleV2Service {
             logger.info("writer: " + article.getLoginEmail());
 
             if (article == null) {
-                throw new CommonApiException(ApiRespPolicy.ERR_ARTICLE_NULL);
+                throw new CommonApiException(ApiRespPolicy.ERR_ARTICLE_NOT_FOUND);
             }
             if (!article.getLoginEmail().equals(userName)) {
                 throw new CommonApiException(ApiRespPolicy.ERR_USER_NOT_LOGGED_IN);
