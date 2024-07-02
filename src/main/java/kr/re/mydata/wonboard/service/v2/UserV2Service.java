@@ -85,7 +85,7 @@ public class UserV2Service {
             logger.info("userFromDB: {}", userFromDB);
 
             if (userFromDB == null || !passwordEncoder.matches(userReq.getPassword(), userFromDB.getPassword())) {
-                throw new CommonApiException(ApiRespPolicy.ERR_NOT_AUTHORIZED);
+                throw new CommonApiException(ApiRespPolicy.ERR_NOT_AUTHENTICATED);
             }
             // access token, refresh token 발급
             String accessToken = jwtUtil.createAccessToken(userFromDB.getLoginEmail());

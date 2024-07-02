@@ -8,4 +8,5 @@ public class DetailV2Resp {
     private String writer;
     private String title;
     private String content;
+    private String path;
 }

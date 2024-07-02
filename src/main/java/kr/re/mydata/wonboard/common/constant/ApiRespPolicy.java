@@ -12,7 +12,7 @@ public enum ApiRespPolicy {
 
     ERR_INVALID_PARAMS(HttpStatus.BAD_REQUEST, 40001, "message.api.resp.policy.err_invalid_params"),
     ERR_DUPLICATED_USER(HttpStatus.CONFLICT, 40901, "message.api.resp.policy.err_duplicated_user"),
-    ERR_NOT_AUTHORIZED(HttpStatus.UNAUTHORIZED, 40400, "message.api.resp.policy.err_not_authorized"),
+    ERR_NOT_AUTHENTICATED(HttpStatus.UNAUTHORIZED, 40400, "message.api.resp.err_policy.authenticated"),
     ERR_INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, 40401, "message.api.resp.policy.err_invalid_refresh_token"),
     ERR_ARTICLE_NULL(HttpStatus.NOT_FOUND, 40402, "message.api.resp.policy.err_article_null"),
     ERR_USERDETAIL_NULL(HttpStatus.NOT_FOUND, 40403, "message.api.resp.policy.err_userdetail_null"),

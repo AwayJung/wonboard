@@ -5,6 +5,7 @@ import kr.re.mydata.wonboard.common.constant.ApiRespPolicy;
 import kr.re.mydata.wonboard.common.exception.CommonApiException;
 import kr.re.mydata.wonboard.common.model.response.ApiV2Resp;
 import kr.re.mydata.wonboard.model.db.Article;
+import kr.re.mydata.wonboard.model.db.Attach;
 import kr.re.mydata.wonboard.model.request.v2.ArticleV2Req;
 import kr.re.mydata.wonboard.model.response.v2.ArticleV2Resp;
 import kr.re.mydata.wonboard.model.response.v2.DetailV2Resp;
@@ -13,23 +14,27 @@ import kr.re.mydata.wonboard.service.v2.ArticleV2Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 @RestController
 @RequestMapping("/v2/articles")
 public class ArticleV2Controller {
-    private static final Logger logger = LoggerFactory.getLogger(ArticleV2Controller.class);
 
     @Autowired
     private ArticleV2Service articleService;
 
     @PostMapping("/")
-    public ResponseEntity<ApiV2Resp> post(@RequestPart @Valid ArticleV2Req articleV2Req, @RequestPart("file") MultipartFile file) throws IOException, CommonApiException {
+    public ResponseEntity<ApiV2Resp> post(@RequestPart @Valid ArticleV2Req articleV2Req, @RequestPart("file") MultipartFile file) throws CommonApiException {
         Article article = new Article();
         article.setTitle(articleV2Req.getTitle());
         article.setContent(articleV2Req.getContent());
@@ -47,13 +52,6 @@ public class ArticleV2Controller {
     @GetMapping("/{id}")
     public ResponseEntity<ApiV2Resp> getArticle(@PathVariable("id") int id) throws CommonApiException {
         DetailV2Resp detail = articleService.getDetail(id);
-//        DetailV2Resp detailV2Resp = new DetailV2Resp();
-//
-//        detailV2Resp.setTitle(article.getTitle());
-//        detailV2Resp.setContent(article.getContent());
-//        detailV2Resp.setWriter(article.getWriter());
-//        detailV2Resp.setId(article.getId());
-
         return ResponseEntity.status(ApiRespPolicy.SUCCESS.getHttpStatus()).body(ApiV2Resp.of(ApiRespPolicy.SUCCESS, detail));
     }
 
@@ -72,4 +70,12 @@ public class ArticleV2Controller {
         articleService.delete(id);
         return ResponseEntity.status(ApiRespPolicy.SUCCESS.getHttpStatus()).body(ApiV2Resp.of(ApiRespPolicy.SUCCESS));
     }
+//
+//    @GetMapping("/upload/{filename:.+}")
+//    @ResponseBody
+//    public ResponseEntity<Resource> serverFile(@PathVariable String filename){
+//        Resource file = articleService.loadAsResource(filename);
+//        return ResponseEntity.ok().body(file);
+//    }
 }
+

@@ -16,6 +16,8 @@ import kr.re.mydata.wonboard.model.response.v2.DetailV2Resp;
 import kr.re.mydata.wonboard.model.response.v2.ListV2Resp;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,6 +30,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
 
@@ -121,7 +126,14 @@ public class ArticleV2Service {
     @Transactional(readOnly = true)
     public DetailV2Resp getDetail(int id) throws CommonApiException {
         try {
-            return articleDAO.getDetail(id);
+            DetailV2Resp detail = articleDAO.getDetail(id);
+            Attach attach = attachDAO.getAttach(id);
+            if (attach != null) {
+                detail.setPath(attach.getPath());
+            }
+            return detail;
+//        try {
+//            return articleDAO.getDetail(id);
         } catch (Exception e) {
             logger.error("Failed to get article", e);
             e.printStackTrace();
@@ -210,4 +222,17 @@ public class ArticleV2Service {
             throw new CommonApiException(ApiRespPolicy.ERR_SYSTEM);
         }
     }
+//    public Resource loadAsResource(String filename) {
+//        try {
+//            Path file = Paths.get("D:/workspaces/spring/images/" + filename);
+//            Resource resource = new UrlResource(file.toUri());
+//            if (resource.exists() || resource.isReadable()) {
+//                return resource;
+//            } else {
+//                throw new RuntimeException("Could not read file: " + filename);
+//            }
+//        } catch (MalformedURLException e) {
+//            throw new RuntimeException("Could not read file: " + filename, e);
+//        }
+//    }
 }
