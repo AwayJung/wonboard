@@ -66,6 +66,7 @@ public class SecurityConfig {
                                 new AntPathRequestMatcher("/v2/users/signup"),
                                 new AntPathRequestMatcher("/v2/users/signup-example"),
                                 new AntPathRequestMatcher("/v2/users/login")
+//                                new AntPathRequestMatcher("/v2/articles/upload/**")
                         ).permitAll()
                         .requestMatchers(
                                 new AntPathRequestMatcher("/article/**"),
