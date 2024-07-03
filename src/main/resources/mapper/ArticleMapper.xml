@@ -3,8 +3,8 @@
 
 <mapper namespace="kr.re.mydata.wonboard.dao.ArticleDAO">
     <insert id="postArticle" parameterType="kr.re.mydata.wonboard.model.db.Article" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO article (id, title, content, reg_dt, upd_dt, reg_user_id, upd_user_id)
-        VALUES (#{id}, #{title}, #{content}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, #{regUserId}, #{updUserId})
+        INSERT INTO article (id, reg_user_id, upd_user_id, title, content, reg_dt, upd_dt)
+        VALUES (#{id}, #{regUserId}, #{updUserId}, #{title}, #{content}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
     </insert>
 
     <select id="getList" resultType="kr.re.mydata.wonboard.model.response.v2.ListV2Resp">
