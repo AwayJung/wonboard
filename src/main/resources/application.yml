@@ -4,9 +4,11 @@ spring:
       on-profile: local
   datasource:
     driverClassName: com.mysql.cj.jdbc.Driver
-    jdbc-url: jdbc:mysql://database-test.cpiawvgqofun.ap-northeast-2.rds.amazonaws.com:3306/WONBOARD
+#    jdbc-url: jdbc:mysql://database-test.cpiawvgqofun.ap-northeast-2.rds.amazonaws.com:3306/WONBOARD
+    jdbc-url: jdbc:mysql://localhost:23306/WONBOARD
     username: admin
-    password: Portal2023!
+    password: admin1234
+#    password: Portal2023!
 mybatis:
   mapper-locations: classpath:/mapper/*.xml
 jwt:
@@ -21,9 +23,10 @@ spring:
       on-profile: dev
   datasource:
     driverClassName: com.mysql.cj.jdbc.Driver
-    jdbc-url: jdbc:mysql://database-test.cpiawvgqofun.ap-northeast-2.rds.amazonaws.com:3306/WONBOARD
+#    jdbc-url: jdbc:mysql://database-test.cpiawvgqofun.ap-northeast-2.rds.amazonaws.com:3306/WONBOARD
+    jdbc-url: jdbc:mysql://localhost:23306/WONBOARD
     username: admin
-    password: Portal2023!
+    password: admin1234
 mybatis:
   mapper-locations: classpath:/mapper/*.xml
 jwt:

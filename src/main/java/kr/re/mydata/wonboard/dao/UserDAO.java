@@ -4,7 +4,6 @@ package kr.re.mydata.wonboard.dao;
 import kr.re.mydata.wonboard.model.db.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.security.core.userdetails.UserDetails;
 
 @Mapper
 public interface UserDAO {
