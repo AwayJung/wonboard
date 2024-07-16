@@ -2,6 +2,11 @@ package kr.re.mydata.wonboard.common.constant;
 
 import org.springframework.http.HttpStatus;
 
+/**
+ * API 응답 정책 관리 Enum
+ *
+ * @author yrlee@mydata.re.kr
+ */
 public enum ApiRespPolicy {
     SUCCESS(HttpStatus.OK, 20000, "message.api.resp.policy.success"),
     SUCCESS_CREATED(HttpStatus.CREATED, 20100,"message.api.resp.policy.success_created"),

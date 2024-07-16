@@ -5,17 +5,20 @@ import kr.re.mydata.wonboard.common.constant.ApiRespPolicy;
 
 import kr.re.mydata.wonboard.common.exception.CommonApiException;
 import kr.re.mydata.wonboard.common.jwt.JwtUtil;
+import kr.re.mydata.wonboard.common.util.AuthUtil;
 import kr.re.mydata.wonboard.dao.ArticleDAO;
 import kr.re.mydata.wonboard.dao.AttachDAO;
 import kr.re.mydata.wonboard.dao.UserDAO;
 import kr.re.mydata.wonboard.model.db.Article;
 import kr.re.mydata.wonboard.model.db.Attach;
 import kr.re.mydata.wonboard.model.db.User;
+import kr.re.mydata.wonboard.model.request.v2.ArticleV2Req;
 import kr.re.mydata.wonboard.model.response.v2.DeleteV2Resp;
 import kr.re.mydata.wonboard.model.response.v2.DetailV2Resp;
 import kr.re.mydata.wonboard.model.response.v2.ListV2Resp;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.security.core.Authentication;
@@ -46,10 +49,46 @@ public class ArticleV2Service {
     private UserDAO userDAO;
     @Autowired
     private AttachDAO attachDAO;
-    @Autowired
-    private JwtUtil jwtUtil;
+    @Value("${app.config.file.path}")
+    private String filePath;
 
     @Transactional
+    public void post(ArticleV2Req articleReq, MultipartFile file) throws Exception {
+        try {
+            int userId = AuthUtil.getUserId();
+
+            Article article = new Article();
+            article.setTitle(articleReq.getTitle());
+            article.setContent(articleReq.getContent());
+            article.setRegUserId(userId);
+            article.setUpdUserId(userId);
+
+            // Article 저장
+            articleDAO.postArticle(article);
+
+            // Attach 저장
+            if (file != null && !file.isEmpty()) {
+                String fileName = UUID.randomUUID().toString();
+                File fileObject = new File(filePath + fileName);
+                file.transferTo(fileObject);
+
+                Attach attach = new Attach();
+                attach.setRealName(file.getOriginalFilename());
+                attach.setName(fileName);
+                attach.setPath(filePath);
+                attach.setPostId(article.getId());
+
+                attachDAO.postAttach(attach);
+                logger.info("Attach posted successfully: " + attach);
+            }
+        } catch (Exception e) {
+            logger.error("Failed to post article", e);
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+/*    @Transactional
     public void post(Article article, MultipartFile file) throws CommonApiException {
         try {
             Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -108,7 +147,7 @@ public class ArticleV2Service {
             e.printStackTrace();
             throw new CommonApiException(ApiRespPolicy.ERR_SYSTEM);
         }
-    }
+    }*/
 
     @Transactional(readOnly = true)
     public List<ListV2Resp> getList() throws CommonApiException {

@@ -34,12 +34,8 @@ public class ArticleV2Controller {
     private ArticleV2Service articleService;
 
     @PostMapping("/")
-    public ResponseEntity<ApiV2Resp> post(@RequestPart @Valid ArticleV2Req articleV2Req, @RequestPart("file") MultipartFile file) throws CommonApiException {
-        Article article = new Article();
-        article.setTitle(articleV2Req.getTitle());
-        article.setContent(articleV2Req.getContent());
-
-        articleService .post(article, file);
+    public ResponseEntity<ApiV2Resp> post(@RequestPart @Valid ArticleV2Req articleV2Req, @RequestPart("file") MultipartFile file) throws Exception {
+        articleService .post(articleV2Req, file);
         return ResponseEntity.status(ApiRespPolicy.SUCCESS_CREATED.getHttpStatus()).body(ApiV2Resp.of(ApiRespPolicy.SUCCESS_CREATED));
     }
 

@@ -4,6 +4,11 @@ import org.springframework.context.support.MessageSourceAccessor;
 
 import java.util.Locale;
 
+/**
+ * Message 처리 유틸
+ *
+ * @author yrlee@mydata.re.kr
+ */
 public class MessageUtil {
 
     private static MessageSourceAccessor messageSourceAccessor = null;

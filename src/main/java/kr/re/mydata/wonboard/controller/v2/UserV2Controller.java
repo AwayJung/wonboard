@@ -16,7 +16,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-
+/**
+ * 유저 컨틀롤러
+ *
+ * @author wjjung@mydata.re.kr
+ */
 @RestController
 @RequestMapping("/v2/users")
 public class UserV2Controller {
@@ -24,6 +28,12 @@ public class UserV2Controller {
     @Autowired
     private UserV2Service userService;
 
+    /**
+     * 회원가입
+     *
+     * @param userReq 유저정보 객체
+     * @return 회원가입 성공여부
+     */
     @PostMapping("/signup")
     public ResponseEntity<ApiV2Resp> signup(@RequestBody @Valid UserV2Req userReq) throws Exception {
         userService.createUser(userReq);

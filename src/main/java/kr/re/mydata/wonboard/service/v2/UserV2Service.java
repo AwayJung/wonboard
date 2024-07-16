@@ -16,6 +16,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * 유저 서비스
+ *
+ * @author wjjung@mydata.re.kr
+ */
 @Service
 public class UserV2Service {
     private static final Logger logger = LoggerFactory.getLogger(UserV2Service.class);
@@ -32,7 +37,12 @@ public class UserV2Service {
     @Autowired
     private ModelMapper modelMapper;
 
-    // 회원가입
+    /**
+     * 회원가입
+     *
+     * @param userReq 유저정보 객체
+     * @throws CommonApiException with {@link ApiRespPolicy#ERR_DUPLICATED_USER} 중복된 유저가 존재할 때
+     */
     @Transactional
     public void createUser(UserV2Req userReq) throws Exception {
         try {
