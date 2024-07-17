@@ -1,6 +1,7 @@
 package kr.re.mydata.wonboard.controller.v2;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import kr.re.mydata.wonboard.common.constant.ApiRespPolicy;
 import kr.re.mydata.wonboard.common.exception.CommonApiException;
 import kr.re.mydata.wonboard.common.model.response.ApiV2Resp;
@@ -10,6 +11,7 @@ import kr.re.mydata.wonboard.model.request.v2.ArticleV2Req;
 import kr.re.mydata.wonboard.model.response.v2.ArticleV2Resp;
 import kr.re.mydata.wonboard.model.response.v2.DetailV2Resp;
 import kr.re.mydata.wonboard.model.response.v2.ListV2Resp;
+import kr.re.mydata.wonboard.model.response.v2.PageV2Resp;
 import kr.re.mydata.wonboard.service.v2.ArticleV2Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,17 +36,16 @@ public class ArticleV2Controller {
     private ArticleV2Service articleService;
 
     @PostMapping("/")
-    public ResponseEntity<ApiV2Resp> post(@RequestPart @Valid ArticleV2Req articleV2Req, @RequestPart("file") MultipartFile file) throws Exception {
+    public ResponseEntity<ApiV2Resp> post(@RequestPart @Valid @NotNull ArticleV2Req articleV2Req, @RequestPart("file") @NotNull MultipartFile file) throws Exception {
         articleService .post(articleV2Req, file);
         return ResponseEntity.status(ApiRespPolicy.SUCCESS_CREATED.getHttpStatus()).body(ApiV2Resp.of(ApiRespPolicy.SUCCESS_CREATED));
     }
 
     @GetMapping("/")
-    public ResponseEntity<ApiV2Resp> getArticleList() throws CommonApiException {
-        List<ListV2Resp> result= articleService.getList();
+    public ResponseEntity<ApiV2Resp> getArticleList(@RequestParam(value = "page", defaultValue = "1") int page, @RequestParam(value = "size", defaultValue = "10") int size) throws Exception {
+        PageV2Resp result = articleService.getList(page, size);
         return ResponseEntity.status(ApiRespPolicy.SUCCESS.getHttpStatus()).body(ApiV2Resp.of(ApiRespPolicy.SUCCESS, result));
     }
-
     @GetMapping("/{id}")
     public ResponseEntity<ApiV2Resp> getArticle(@PathVariable("id") int id) throws CommonApiException {
         DetailV2Resp detail = articleService.getDetail(id);

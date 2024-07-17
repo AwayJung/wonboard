@@ -16,6 +16,8 @@ import kr.re.mydata.wonboard.model.request.v2.ArticleV2Req;
 import kr.re.mydata.wonboard.model.response.v2.DeleteV2Resp;
 import kr.re.mydata.wonboard.model.response.v2.DetailV2Resp;
 import kr.re.mydata.wonboard.model.response.v2.ListV2Resp;
+import kr.re.mydata.wonboard.model.response.v2.PageV2Resp;
+import org.apache.ibatis.session.RowBounds;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -49,6 +51,8 @@ public class ArticleV2Service {
     private UserDAO userDAO;
     @Autowired
     private AttachDAO attachDAO;
+
+    // 경로는 분리해줘야함 -> application.properties에 설정한 경로를 가져와서 사용
     @Value("${app.config.file.path}")
     private String filePath;
 
@@ -89,7 +93,9 @@ public class ArticleV2Service {
     }
 
 /*    @Transactional
+    // CommonApiException은 한정적이기 때문에 Ex
     public void post(Article article, MultipartFile file) throws CommonApiException {
+        // AuthUtil 을 사용해서 로그인한 사용자 정보를 가져와야함-> 분리해줘야함
         try {
             Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             logger.info("Principal: " + principal);
@@ -104,6 +110,8 @@ public class ArticleV2Service {
                     }
                     int userId = user.getId();
                     logger.info("User ID: " + userId);
+
+                    // 컨트롤러에서 @NotNull을 사용해서 null이 들어가지 않도록 하기 때문에 여기서는 체크하지 않음
                     if (article != null) {
                         article.setRegUserId(userId);
                         article.setUpdUserId(userId);
@@ -113,12 +121,14 @@ public class ArticleV2Service {
                 } else {
                     throw new CommonApiException(ApiRespPolicy.ERR_USERDETAIL_NOT_FOUND);
                 }
+                // 필요 없는 예외처리/ 로그인 되지 않은 사용자는 필터에서 처리(서비스단에서는 필요없음)
             } else {
                 throw new CommonApiException(ApiRespPolicy.ERR_USER_NOT_LOGGED_IN);
 
             }
 
             // Article 저장
+            // 필요없는 예외처리 -> 에러가 나면 여기서 걸리지 않고 바로 catch로 넘어감
             int rowsAffected = articleDAO.postArticle(article);
             if (rowsAffected != 1) {
                 throw new CommonApiException(ApiRespPolicy.ERR_SYSTEM);
@@ -150,15 +160,20 @@ public class ArticleV2Service {
     }*/
 
     @Transactional(readOnly = true)
-    public List<ListV2Resp> getList() throws CommonApiException {
+    public PageV2Resp getList(int page, int size) {
         try {
-            return articleDAO.getList();
+            int offset = (page - 1) * size;
+            RowBounds rowBounds = new RowBounds(offset, size);
+            List<ListV2Resp> articles = articleDAO.getList(rowBounds);
+            int totalArticleCount = articleDAO.getTotalArticleCount();
+            int totalPages = (int) Math.ceil((double) totalArticleCount / size);
+            logger.info("Paging query executed with offset: {}, limit: {}, totalArticleCount: {} ", offset, size, totalArticleCount);
 
-        } catch (Exception e) {
+            return new PageV2Resp(articles, page, totalPages, totalArticleCount);
+        } catch (RuntimeException e) {
             logger.error("Failed to get article list", e);
             e.printStackTrace();
-            throw new CommonApiException(ApiRespPolicy.ERR_SYSTEM);
-
+            throw e;
         }
     }
 

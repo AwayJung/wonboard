@@ -4,7 +4,7 @@ spring:
       on-profile: local
   datasource:
     driverClassName: com.mysql.cj.jdbc.Driver
-    jdbc-url: jdbc:mysql://localhost:13306/WONBOARD
+    jdbc-url: jdbc:mysql://localhost:33306/WONBOARD
     username: admin
     password: admin1234
 mybatis:
@@ -14,8 +14,7 @@ jwt:
 app:
   config:
     file:
-      path: ${REPLACE_ME}
-
+      path: D:/workspaces/spring/images/
 ---
 
 #### DEV CONFIG ####
@@ -25,9 +24,9 @@ spring:
       on-profile: dev
   datasource:
     driverClassName: com.mysql.cj.jdbc.Driver
-    jdbc-url: jdbc:mysql://database-test.cpiawvgqofun.ap-northeast-2.rds.amazonaws.com:3306/WONBOARD
+    jdbc-url: jdbc:mysql://localhost:23306/WONBOARD
     username: admin
-    password: Portal2023!
+    password: admin1234
 mybatis:
   mapper-locations: classpath:/mapper/*.xml
 jwt:
@@ -35,4 +34,4 @@ jwt:
 app:
   config:
     file:
-      path: ${REPLACE_ME}
+      path: D:/workspaces/spring/images/

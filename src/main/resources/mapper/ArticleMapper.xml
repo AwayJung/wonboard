@@ -14,6 +14,10 @@
         ORDER BY a.reg_dt DESC;
     </select>
 
+    <select id="getTotalArticleCount" resultType="int">
+        SELECT COUNT(*) FROM article
+    </select>
+
     <select id="getDetail" parameterType="int" resultType="kr.re.mydata.wonboard.model.response.v2.DetailV2Resp">
         SELECT a.id AS id,u.name AS writer, a.title AS title, a.content AS content
         FROM article a

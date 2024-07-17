@@ -1,2 +1,15 @@
-package kr.re.mydata.wonboard.model.response.v2;public class PageV2Resp {
+package kr.re.mydata.wonboard.model.response.v2;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+import java.util.List;
+
+@Data
+@AllArgsConstructor
+public class PageV2Resp {
+    private List<ListV2Resp> articles;
+    private int page;
+    private int size;
+    private int totalPage;
 }
