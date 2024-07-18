@@ -13,6 +13,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * API 공통 응답 모델
+ *
+ * @author yrlee@mydata.re.kr
+ */
 @Data
 public class ApiV2Resp {
 

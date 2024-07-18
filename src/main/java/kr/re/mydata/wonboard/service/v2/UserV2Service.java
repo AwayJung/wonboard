@@ -16,6 +16,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * 유저 서비스
+ *
+ * @author wjjung@mydata.re.kr
+ */
 @Service
 public class UserV2Service {
     private static final Logger logger = LoggerFactory.getLogger(UserV2Service.class);
@@ -32,7 +37,12 @@ public class UserV2Service {
     @Autowired
     private ModelMapper modelMapper;
 
-    // 회원가입
+    /**
+     * 회원가입
+     *
+     * @param userReq 유저정보 객체
+     * @throws CommonApiException with {@link ApiRespPolicy#ERR_DUPLICATED_USER} 중복된 유저가 존재할 때
+     */
     @Transactional
     public void createUser(UserV2Req userReq) throws Exception {
         try {
@@ -77,6 +87,13 @@ public class UserV2Service {
         }
     }
 
+    /**
+     * 로그인
+     *
+     * @param userReq 유저정보 객체
+     * @throws CommonApiException with {@link ApiRespPolicy#ERR_NOT_AUTHENTICATED} 인증되지 않은 유저일 때
+     */
+
     @Transactional
     public UserV2Resp login(UserV2LoginReq userReq) throws Exception {
         try {
@@ -117,6 +134,12 @@ public class UserV2Service {
         }
     }
 
+    /**
+     * 로그인
+     *
+     * @param refreshToken 리프레쉬토큰
+     * @throws CommonApiException with {@link ApiRespPolicy#ERR_INVALID_REFRESH_TOKEN} 리프레쉬토큰이 유효하지 않을 때
+     */
 
     @Transactional
     public UserV2Resp refresh(String refreshToken) throws Exception {

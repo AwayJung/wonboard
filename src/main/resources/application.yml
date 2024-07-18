@@ -4,15 +4,17 @@ spring:
       on-profile: local
   datasource:
     driverClassName: com.mysql.cj.jdbc.Driver
-#    jdbc-url: jdbc:mysql://database-test.cpiawvgqofun.ap-northeast-2.rds.amazonaws.com:3306/WONBOARD
-    jdbc-url: jdbc:mysql://localhost:23306/WONBOARD
+    jdbc-url: jdbc:mysql://localhost:33306/WONBOARD
     username: admin
     password: admin1234
-#    password: Portal2023!
 mybatis:
   mapper-locations: classpath:/mapper/*.xml
 jwt:
   secret: 4oCYbGVhLXNwcmluZy1ib290LWp3dC10dXRvcmlhbC1zZWNyZXQtbmZ0LXNwcmluZy1ib290LWp3dC10dXRvcmlhbOKAmQo=
+app:
+  config:
+    file:
+      path: D:/workspaces/spring/images/
 
 ---
 
@@ -23,11 +25,14 @@ spring:
       on-profile: dev
   datasource:
     driverClassName: com.mysql.cj.jdbc.Driver
-#    jdbc-url: jdbc:mysql://database-test.cpiawvgqofun.ap-northeast-2.rds.amazonaws.com:3306/WONBOARD
-    jdbc-url: jdbc:mysql://localhost:23306/WONBOARD
+    jdbc-url: jdbc:mysql://localhost:33306/WONBOARD
     username: admin
     password: admin1234
 mybatis:
   mapper-locations: classpath:/mapper/*.xml
 jwt:
   secret: 4oCYbGVhLXNwcmluZy1ib290LWp3dC10dXRvcmlhbC1zZWNyZXQtbmZ0LXNwcmluZy1ib290LWp3dC10dXRvcmlhbOKAmQo=
+app:
+  config:
+    file:
+      path: D:/workspaces/spring/images/

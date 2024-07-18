@@ -2,6 +2,11 @@ package kr.re.mydata.wonboard.common.constant;
 
 import org.springframework.http.HttpStatus;
 
+/**
+ * API 응답 정책 관리 Enum
+ *
+ * @author yrlee@mydata.re.kr
+ */
 public enum ApiRespPolicy {
     SUCCESS(HttpStatus.OK, 20000, "message.api.resp.policy.success"),
     SUCCESS_CREATED(HttpStatus.CREATED, 20100,"message.api.resp.policy.success_created"),
@@ -18,6 +23,7 @@ public enum ApiRespPolicy {
     ERR_USERDETAIL_NOT_FOUND(HttpStatus.NOT_FOUND, 40403, "message.api.resp.policy.err_userdetail_not_found"),
     ERR_USER_NOT_LOGGED_IN(HttpStatus.UNAUTHORIZED, 40404, "message.api.resp.policy.err_user_not_logged_in"),
     ERR_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, 40405, "message.api.resp.policy.err_token_expired"),
+    ERR_TOKEN_INVALID(HttpStatus.UNAUTHORIZED, 40406, "message.api.resp.policy.err_token_invalid"),
     ERR_TEXT_LENGTH_EXCEEDED(HttpStatus.BAD_REQUEST, 40002, "message.api.resp.policy.err_text_length_exceeded");
 
     private final HttpStatus httpStatus;

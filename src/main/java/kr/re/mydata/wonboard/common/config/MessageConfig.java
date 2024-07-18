@@ -12,6 +12,11 @@ import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
 import java.util.Locale;
 
+/**
+ * 국제화(i18n/Message) 설정
+ *
+ * @author yrlee@mydata.re.kr
+ */
 @Configuration
 public class MessageConfig implements WebMvcConfigurer {
 

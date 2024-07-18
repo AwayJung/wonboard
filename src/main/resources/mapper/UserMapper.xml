@@ -13,6 +13,10 @@
         SELECT id , name , login_email AS "loginEmail", password FROM user WHERE login_email = #{loginEmail}
     </select>
 
+    <select id="getUserIdByEmail" parameterType="string" resultType="int">
+        SELECT id FROM user WHERE login_email = #{loginEmail}
+    </select>
+
     <update id="updateRefreshToken" >
         UPDATE user SET refresh_token = #{refreshToken}, refresh_token_issue_dt = CURRENT_TIMESTAMP WHERE login_email = #{loginEmail}
     </update>

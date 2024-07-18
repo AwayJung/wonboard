@@ -5,6 +5,11 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
+/**
+ * 유저 API 응답 모델
+ *
+ * @author yrlee@mydata.re.kr
+ */
 @Data
 public class UserV2Resp {
     @JsonInclude(JsonInclude.Include.NON_EMPTY)

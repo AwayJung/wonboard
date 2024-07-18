@@ -5,6 +5,7 @@ import kr.re.mydata.wonboard.model.response.v2.DeleteV2Resp;
 import kr.re.mydata.wonboard.model.response.v2.DetailV2Resp;
 import kr.re.mydata.wonboard.model.response.v2.ListV2Resp;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.session.RowBounds;
 
 import java.util.List;
 
@@ -12,7 +13,9 @@ import java.util.List;
 public interface ArticleDAO {
     int postArticle(Article article);
 
-    List<ListV2Resp> getList();
+    List<ListV2Resp> getList(RowBounds rowBounds);
+
+    int getTotalArticleCount();
 
     DetailV2Resp getDetail(int id);
 
