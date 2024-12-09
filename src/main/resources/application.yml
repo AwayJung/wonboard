@@ -4,9 +4,13 @@ spring:
       on-profile: local
   datasource:
     driverClassName: com.mysql.cj.jdbc.Driver
-    jdbc-url: jdbc:mysql://localhost:33306/WONBOARD
+    jdbc-url: jdbc:mysql://localhost:3306/wonboard
     username: admin
     password: admin1234
+  servlet:                      # 여기에 추가
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
 mybatis:
   mapper-locations: classpath:/mapper/*.xml
 jwt:
@@ -14,7 +18,7 @@ jwt:
 app:
   config:
     file:
-      path: D:/workspaces/spring/images/
+      path: /Users/wonjung/Workspace/Intellij/Practice/Be/Upload/
 
 ---
 
@@ -25,9 +29,13 @@ spring:
       on-profile: dev
   datasource:
     driverClassName: com.mysql.cj.jdbc.Driver
-    jdbc-url: jdbc:mysql://localhost:33306/WONBOARD
+    jdbc-url: jdbc:mysql://localhost:3306/wonboard
     username: admin
     password: admin1234
+  servlet:                      # 여기에 추가
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
 mybatis:
   mapper-locations: classpath:/mapper/*.xml
 jwt:
@@ -35,4 +43,4 @@ jwt:
 app:
   config:
     file:
-      path: D:/workspaces/spring/images/
+      path: /Users/wonjung/Workspace/Intellij/Practice/Be/Upload/
